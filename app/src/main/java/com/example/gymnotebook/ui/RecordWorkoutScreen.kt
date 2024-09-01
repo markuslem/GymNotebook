@@ -1,6 +1,7 @@
 package com.example.gymnotebook.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,15 +40,16 @@ fun RecordWorkoutScreen(
             .padding(16.dp)
     ) {
         item {
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .size(180.dp)
-                    .fillMaxWidth()
-                    .wrapContentWidth(Alignment.CenterHorizontally),
-                shape = RoundedCornerShape(32.dp)
-            ) {
-                Text(text = "Quick start")
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(180.dp)
+                        .align(Alignment.Center),
+                    shape = RoundedCornerShape(32.dp)
+                ) {
+                    Text(text = "Quick start")
+                }
             }
         }
 
@@ -68,17 +70,6 @@ fun RecordWorkoutScreen(
                     )
                 }
             }
-
-
-//            items(DataSource.workoutPlans) { item ->
-//                WorkoutCard(
-//                    workoutPlan = item,
-//                    modifier = Modifier.padding(
-//                        horizontal = 16.dp,
-//                        vertical = 8.dp
-//                    )
-//                )
-//            }
         }
         WorkoutCards()
     }
