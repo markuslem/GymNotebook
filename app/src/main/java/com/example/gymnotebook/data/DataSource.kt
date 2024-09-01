@@ -21,6 +21,18 @@ object DataSource {
         WorkoutPlan(
             title = "Chess",
             exercisesList = null
+        ),
+        WorkoutPlan(
+            title = "Legs",
+            exercisesList = listOf(
+                exercise1, exercise2
+            )
+        ),
+        WorkoutPlan(
+            title = "Legs",
+            exercisesList = listOf(
+                exercise1, exercise2
+            )
         )
     )
 }
