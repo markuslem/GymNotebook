@@ -1,0 +1,5 @@
+GymNotebookScreen - GymNotebookApp = Is called out when running the app. Calls out viewModel() and navController.
+Contains navigation logic.
+AppUiState = Contains data for short term business logic of the application
+GymNotebookViewModel = Takes care of updating the AppUiState
+ExerciseCard = Displays the sets, reps and weights to be done

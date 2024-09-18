@@ -1,5 +1,7 @@
 package com.example.gymnotebook.data
 
+import com.example.gymnotebook.Exercise
+
 val exercise1 = Exercise("Deadlift (barbell)", "Glutes", null)
 val exercise2 = Exercise("Pull-up", "Back", null)
 val exercise3 = Exercise("Barbell Squat", "Legs", null)

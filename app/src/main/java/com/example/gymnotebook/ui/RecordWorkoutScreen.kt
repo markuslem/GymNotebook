@@ -33,6 +33,7 @@ import com.example.gymnotebook.data.DataSource
 @Composable
 fun RecordWorkoutScreen(
     modifier: Modifier = Modifier,
+    onEmptyWorkoutButtonClicked: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -42,7 +43,7 @@ fun RecordWorkoutScreen(
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { onEmptyWorkoutButtonClicked() },
                     modifier = Modifier
                         .size(180.dp)
                         .align(Alignment.Center),
@@ -59,7 +60,7 @@ fun RecordWorkoutScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { /*TODO: Navigate to a new Screen*/ },
+                    onClick = { println("hello") },
                     modifier = Modifier
                         .width(152.dp)
                         .align(Alignment.CenterHorizontally)
@@ -94,7 +95,8 @@ fun RecordWorkoutScreenPreview() {
     GymNotebookTheme {
         RecordWorkoutScreen(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            onEmptyWorkoutButtonClicked = {}
         )
     }
 }
