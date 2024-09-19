@@ -18,4 +18,12 @@ class GymNotebookViewModel : ViewModel() {
             )
         }
     }
+
+    fun changeWeight(newWeight: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                weight = newWeight.toInt()
+            )
+        }
+    }
 }

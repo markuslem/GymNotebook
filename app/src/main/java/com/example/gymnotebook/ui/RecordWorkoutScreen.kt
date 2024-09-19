@@ -60,7 +60,7 @@ fun RecordWorkoutScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { println("hello") },
+                    onClick = { println("Would open add workout page") },
                     modifier = Modifier
                         .width(152.dp)
                         .align(Alignment.CenterHorizontally)

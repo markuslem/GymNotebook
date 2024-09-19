@@ -9,23 +9,31 @@ import androidx.compose.runtime.Composable;
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.gymnotebook.Set
+import com.example.gymnotebook.data.AppUiState
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 
 @Composable
 fun OngoingWorkoutScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onWeightChanged: (String) -> Unit,
+    uiState: AppUiState
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        //ExerciseCard(exerciseName = )
 
     }
+    ExerciseCard(
+        exerciseName = "Squat", onWeightChanged = onWeightChanged,
+        sets = listOf(
+            Set(80, 10, false),
+            Set(100, 4, true)
+        )
+    )
 }
-
-
 
 
 @Preview
@@ -34,7 +42,9 @@ fun OngoingWorkoutScreenPreview() {
     GymNotebookTheme {
         OngoingWorkoutScreen(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            onWeightChanged = {},
+            uiState = AppUiState()
         )
     }
 }

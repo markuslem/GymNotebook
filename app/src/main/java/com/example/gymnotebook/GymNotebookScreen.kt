@@ -57,7 +57,8 @@ fun GymNotebookApp(
             }
 
             composable(route = AppScreen.OngoingWorkout.name) {
-                OngoingWorkoutScreen()
+                OngoingWorkoutScreen(onWeightChanged = { viewModel.changeWeight(it) },
+                    uiState = uiState)
             }
 
         }
