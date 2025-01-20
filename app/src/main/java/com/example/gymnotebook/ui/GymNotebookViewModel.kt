@@ -26,4 +26,12 @@ class GymNotebookViewModel : ViewModel() {
             )
         }
     }
+    fun changeReps(newReps : String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                reps = newReps.toInt()
+            )
+
+        }
+    }
 }

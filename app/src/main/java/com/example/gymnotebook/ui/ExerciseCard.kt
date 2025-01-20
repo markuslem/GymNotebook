@@ -3,7 +3,6 @@ package com.example.gymnotebook.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,19 +20,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
-import com.example.gymnotebook.Set
-import com.example.gymnotebook.data.AppUiState
+import com.example.gymnotebook.data.SetOfExercise
 
 @Composable
 fun ExerciseCard(
     modifier: Modifier = Modifier,
     exerciseName: String,
-    sets: List<Set> = emptyList(),
+    sets: List<SetOfExercise> = emptyList(),
     done: Boolean = false,
     onWeightChanged: (String) -> Unit = {},
 ) {
     Card(modifier = modifier) {
-        var weightValue by remember {mutableStateOf("1000") }
+        var weightValue by remember { mutableStateOf("1000") }
+        var repetitions by remember { mutableStateOf("4") }
 
         Column(modifier = Modifier.padding(20.dp)) {
             Text(text = exerciseName)
@@ -48,19 +47,25 @@ fun ExerciseCard(
                 )
             }*/
 
-            Row(
+            Column( // Every set of the exercise in a column
                 modifier = Modifier
             ) {
                 sets.forEach {
+                    Row() {
+                        TextField(
+                            value = weightValue,
+                            onValueChange = {
+                                onWeightChanged(it)
+                                weightValue = it
+                            }
+                        )
+                        TextField(
+                            value = repetitions,
+                            onValueChange = {
 
-                    TextField(
-                        value = weightValue,
-                        onValueChange = {
-                            onWeightChanged(it)
-                            weightValue = it
-                        }
-                    )
-
+                            }
+                        )
+                    }
                 }
             }
 
@@ -73,8 +78,8 @@ fun ExerciseCard(
 @Composable
 fun ExerciseCardPreview() {
     var setsExample = listOf(
-        Set(80, 10, false),
-        Set(100, 4, true)
+        SetOfExercise(80, 10.0F, false),
+        SetOfExercise(100, 4.0F, true)
     )
 
     GymNotebookTheme {

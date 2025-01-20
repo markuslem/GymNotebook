@@ -1,10 +1,8 @@
 package com.example.gymnotebook.data
 
-import com.example.gymnotebook.Exercise
-
-val exercise1 = Exercise("Deadlift (barbell)", "Glutes", null)
-val exercise2 = Exercise("Pull-up", "Back", null)
-val exercise3 = Exercise("Barbell Squat", "Legs", null)
+val exercise1 = Exercise("Deadlift (barbell)", "Glutes")
+val exercise2 = Exercise("Pull-up", "Back")
+val exercise3 = Exercise("Barbell Squat", "Legs")
 
 object DataSource {
     var workoutPlans: List<WorkoutPlan> = listOf(
