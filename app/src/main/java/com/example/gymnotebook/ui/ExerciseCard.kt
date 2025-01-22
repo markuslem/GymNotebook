@@ -19,23 +19,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.gymnotebook.data.AppUiState
+import com.example.gymnotebook.data.DataSource
+import com.example.gymnotebook.data.Exercise
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 import com.example.gymnotebook.data.SetOfExercise
 
 @Composable
 fun ExerciseCard(
     modifier: Modifier = Modifier,
-    exerciseName: String,
-    sets: List<SetOfExercise> = emptyList(),
+    exercise: Exercise,
+    sets: List<SetOfExercise>,
     done: Boolean = false,
-    onWeightChanged: (String) -> Unit = {},
+    onWeightChanged: (Int, Int, String) -> Unit,
+    onRepsChanged: (Int, Int, String) -> Unit,
+    uiState: AppUiState
 ) {
     Card(modifier = modifier) {
         var weightValue by remember { mutableStateOf("1000") }
         var repetitions by remember { mutableStateOf("4") }
 
         Column(modifier = Modifier.padding(20.dp)) {
-            Text(text = exerciseName)
+            Text(text = exercise.name)
 
             HorizontalDivider(color = Color.Gray)
             Spacer(modifier = Modifier.size(12.dp))
@@ -50,19 +55,18 @@ fun ExerciseCard(
             Column( // Every set of the exercise in a column
                 modifier = Modifier
             ) {
-                sets.forEach {
+                sets.forEach { set ->
                     Row() {
                         TextField(
-                            value = weightValue,
-                            onValueChange = {
-                                onWeightChanged(it)
-                                weightValue = it
+                            value = set.weight.toString(),
+                            onValueChange = { newWeight ->
+                                onWeightChanged(exercise.id, set.id, newWeight)
                             }
                         )
                         TextField(
-                            value = repetitions,
-                            onValueChange = {
-
+                            value = set.reps.toString(),
+                            onValueChange = { newReps ->
+                                onRepsChanged(exercise.id, set.id, newReps)
                             }
                         )
                     }
@@ -77,17 +81,24 @@ fun ExerciseCard(
 @Preview
 @Composable
 fun ExerciseCardPreview() {
-    var setsExample = listOf(
-        SetOfExercise(80, 10.0F, false),
-        SetOfExercise(100, 4.0F, true)
-    )
+//    var setsExample = listOf(
+//        SetOfExercise(80, 10.0F, false),
+//        SetOfExercise(100, 4.0F, true)
+//    )
 
     GymNotebookTheme {
-        ExerciseCard(
-            modifier = Modifier
-                .fillMaxWidth(),
-            exerciseName = "Squat",
-            sets = setsExample,
-        )
+        // Picking an exercise from the workout plans
+        val exercise = DataSource.workoutPlans[0].exercisesList?.get(0)
+        if (exercise != null) {
+            ExerciseCard(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                exercise = exercise,
+                sets = exercise.sets,
+                uiState = AppUiState(),
+                onWeightChanged = { _, _, _ -> },
+                onRepsChanged = { _, _, _ -> },
+            )
+        }
     }
 }

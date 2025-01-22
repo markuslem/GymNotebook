@@ -1,7 +1,9 @@
 package com.example.gymnotebook.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.gymnotebook.data.AppUiState
+import com.example.gymnotebook.data.DataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,17 +21,45 @@ class GymNotebookViewModel : ViewModel() {
         }
     }
 
-    fun changeWeight(newWeight: String) {
+    fun changeWeight(exerciseId: Int, setId: Int, newWeight: String) {
+        Log.d("CHANGE_WEIGHT", "Updating exercise: $exerciseId, set: $setId with $newWeight")
         _uiState.update { currentState ->
             currentState.copy(
-                weight = newWeight.toInt()
+                // Finding the exercise and set with the right IDs
+                // TODO: replace with hashmap - weights
+
+                allExercises = currentState.allExercises?.map { exercise ->
+                    if (exercise.id == exerciseId) {
+                        exercise.copy(
+                            sets = exercise.sets.map { set ->
+                                if (set.id == setId) set.copy(weight = newWeight.toFloat()) else set
+                            }
+                        )
+                    } else {
+                        exercise
+                    }
+                }
             )
         }
     }
-    fun changeReps(newReps : String) {
+
+    fun changeReps(exerciseId: Int, setId: Int, newReps: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                reps = newReps.toInt()
+                // Finding the exercise and set with the right IDs
+                // TODO: replace with hashmap - reps
+
+                allExercises = currentState.allExercises?.map { exercise ->
+                    if (exercise.id == exerciseId) {
+                        exercise.copy(
+                            sets = exercise.sets.map { set ->
+                                if (set.id == setId) set.copy(reps = newReps.toInt()) else set
+                            }
+                        )
+                    } else {
+                        exercise
+                    }
+                }
             )
 
         }
