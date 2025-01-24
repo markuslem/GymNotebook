@@ -7,34 +7,48 @@ val exercise2 = Exercise(2, "Pull-up", "Back", setOfExercise)
 val exercise3 = Exercise(3, "Barbell Squat", "Legs", setOfExercise)
 
 object DataSource {
-    var workoutPlans: List<WorkoutPlan> = listOf(
+    val workoutPlans: List<WorkoutPlan> = listOf(
         WorkoutPlan(
             title = "Full body",
             exercisesList = listOf(
                 exercise1, exercise2, exercise3
-            )
+            ),
+            id = 1
         ),
         WorkoutPlan(
             title = "Legs",
             exercisesList = listOf(
                 exercise1, exercise2
-            )
+            ),
+            id = 3
         ),
         WorkoutPlan(
             title = "Chess",
-            exercisesList = null
+            exercisesList = null,
+            id = 4
         ),
         WorkoutPlan(
             title = "Legs",
             exercisesList = listOf(
                 exercise1, exercise2
-            )
+            ),
+            id = 5
         ),
         WorkoutPlan(
             title = "Legs",
             exercisesList = listOf(
                 exercise1, exercise2
-            )
+            ),
+            id = 6
         )
     )
+    val workoutPlansHM: HashMap<Int, WorkoutPlan> = workoutPlansToHashMap(workoutPlans)
+}
+
+fun workoutPlansToHashMap(workoutPlans: List<WorkoutPlan>): HashMap<Int, WorkoutPlan> {
+    var hm = HashMap<Int, WorkoutPlan>()
+    for (plan in workoutPlans) {
+        hm.put(plan.id, plan)
+    }
+    return hm
 }

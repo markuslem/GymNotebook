@@ -3,11 +3,12 @@ package com.example.gymnotebook.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.gymnotebook.data.AppUiState
-import com.example.gymnotebook.data.DataSource
+import com.example.gymnotebook.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.Date
 
 class GymNotebookViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
@@ -21,14 +22,37 @@ class GymNotebookViewModel : ViewModel() {
         }
     }
 
+    fun startWorkout(workoutPlanId: Int) {
+        Log.d("WORKOUT_STARTED", "Started a new workout with ID: $workoutPlanId")
+        // Getting exercises from the workout plan
+        _uiState.update { currentState ->
+            val workoutPlan = currentState.workoutPlans?.get(workoutPlanId)
+            val exercises = workoutPlan?.exercisesList
+            val newWorkout = Workout(
+                id = -1,
+                workoutPlanId = workoutPlanId,
+                startDate = Date(),
+                endDate = null,
+                totalWeight = 0,
+                exercises = exercises
+            )
+            Log.d("WORKOUT_STARTED", "Created a new workout object: $newWorkout")
+            currentState.copy(
+                // Adding the created workout to the list of workouts
+                currentExercises = newWorkout.exercises,
+                allWorkouts = currentState.allWorkouts?.plus(newWorkout)
+            )
+        }
+    }
+
     fun changeWeight(exerciseId: Int, setId: Int, newWeight: String) {
-        Log.d("CHANGE_WEIGHT", "Updating exercise: $exerciseId, set: $setId with $newWeight")
+        Log.d("WORKOUT_STARTED", "Updating exercise: $exerciseId, set: $setId with $newWeight")
         _uiState.update { currentState ->
             currentState.copy(
                 // Finding the exercise and set with the right IDs
                 // TODO: replace with hashmap - weights
 
-                allExercises = currentState.allExercises?.map { exercise ->
+                currentExercises = currentState.currentExercises?.map { exercise ->
                     if (exercise.id == exerciseId) {
                         exercise.copy(
                             sets = exercise.sets.map { set ->
@@ -49,7 +73,7 @@ class GymNotebookViewModel : ViewModel() {
                 // Finding the exercise and set with the right IDs
                 // TODO: replace with hashmap - reps
 
-                allExercises = currentState.allExercises?.map { exercise ->
+                currentExercises = currentState.currentExercises?.map { exercise ->
                     if (exercise.id == exerciseId) {
                         exercise.copy(
                             sets = exercise.sets.map { set ->
@@ -62,6 +86,22 @@ class GymNotebookViewModel : ViewModel() {
                 }
             )
 
+        }
+    }
+
+    fun finishWorkout() {
+        /* Finishing the workout with the current ID
+        * Saving the information about the workout to the completedWorkout object/table
+        */
+        _uiState.update { currentState ->
+            val totalWeight = currentState.currentExercises?.sumOf { exercise ->
+                exercise.sets.sumOf { it.weight.toDouble() * it.reps.toDouble() }
+            }?.toFloat() ?: 0f
+            currentState.copy(
+//                completedWorkouts = currentState.completedWorkouts.
+
+
+            )
         }
     }
 }

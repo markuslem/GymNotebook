@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -46,11 +47,7 @@ fun ExerciseCard(
             Spacer(modifier = Modifier.size(12.dp))
 
             Text(text = "Sets:")
-            /*sets.let { sets ->
-                sets.forEach( set ->
-                    Text(text = set.weight)
-                )
-            }*/
+
 
             Column( // Every set of the exercise in a column
                 modifier = Modifier
@@ -58,12 +55,15 @@ fun ExerciseCard(
                 sets.forEach { set ->
                     Row() {
                         TextField(
+                            modifier = Modifier.width(120.dp),
                             value = set.weight.toString(),
                             onValueChange = { newWeight ->
                                 onWeightChanged(exercise.id, set.id, newWeight)
                             }
                         )
+                        Spacer(modifier = Modifier.size(16.dp))
                         TextField(
+                            modifier = Modifier.width(120.dp),
                             value = set.reps.toString(),
                             onValueChange = { newReps ->
                                 onRepsChanged(exercise.id, set.id, newReps)

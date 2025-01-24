@@ -47,15 +47,21 @@ fun GymNotebookApp(
             startDestination = AppScreen.RecordWorkout.name,
             modifier = Modifier.padding(innerPadding)
         ) {
+            /* Screen where user can select which workout to choose */
             composable(route = AppScreen.RecordWorkout.name) {
                 RecordWorkoutScreen(
-                    onEmptyWorkoutButtonClicked = {
+                    onQuickStartBtnClicked = {
                         println("test")
                         navController.navigate(AppScreen.OngoingWorkout.name)
+                    },
+                    startWorkout = { workoutId ->
+                        navController.navigate(AppScreen.OngoingWorkout.name)
+                        viewModel.startWorkout(workoutId)
                     }
                 )
             }
 
+            /* Screen of an ongoing workout */
             composable(route = AppScreen.OngoingWorkout.name) {
                 OngoingWorkoutScreen(
                     onWeightChanged = { exerciseId, setId, newWeight ->
@@ -64,7 +70,10 @@ fun GymNotebookApp(
                     onRepsChanged = { exerciseId, setId, newReps ->
                         viewModel.changeReps(exerciseId, setId, newReps)
                     },
-                    uiState = uiState
+                    uiState = uiState,
+                    onWorkoutFinished = {
+                        viewModel.finishWorkout()
+                    }
                 )
             }
 

@@ -21,9 +21,12 @@ import com.example.gymnotebook.ui.theme.GymNotebookTheme
 @Composable
 fun WorkoutCard(
     modifier: Modifier = Modifier,
-    workoutPlan: WorkoutPlan
+    workoutPlan: WorkoutPlan,
+    startWorkout: (Int) -> Unit
 ) {
-    Card(modifier = modifier) {
+    Card(modifier = modifier,
+        onClick = { startWorkout(workoutPlan.id) }
+    ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(text = workoutPlan.title)
 
@@ -36,8 +39,10 @@ fun WorkoutCard(
                     Text(text = exercise.name)
                 }
             } ?: run {
-                Text(text = "No exercises",
-                    fontStyle = FontStyle.Italic)
+                Text(
+                    text = "No exercises",
+                    fontStyle = FontStyle.Italic
+                )
             }
         }
     }
@@ -50,7 +55,8 @@ fun WorkoutCardPreview() {
         WorkoutCard(
             modifier = Modifier
                 .fillMaxWidth(),
-            workoutPlan = DataSource.workoutPlans[0]
+            workoutPlan = DataSource.workoutPlans[0],
+            startWorkout = {}
         )
     }
 }

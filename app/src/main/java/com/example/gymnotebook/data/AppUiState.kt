@@ -1,9 +1,9 @@
 package com.example.gymnotebook.data
 
-
-
 data class AppUiState(
-    val weight: Float = 1.0f,
-    val reps: Int = 1,
-    val allExercises: List<Exercise>? = DataSource.workoutPlans[0].exercisesList
+    var onGoingWorkoutId: Int? = -1, // -1 means, that there is no ongoing workout
+    // Contains all of the exercises in current workout
+    val currentExercises: List<Exercise>? = listOf(),
+    var allWorkouts: List<Workout>? = listOf(),
+    var workoutPlans: HashMap<Int, WorkoutPlan>? = DataSource.workoutPlansHM
 )

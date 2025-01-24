@@ -2,11 +2,19 @@ package com.example.gymnotebook.data
 
 import java.util.Date
 
-data class CompletedWorkout(
+data class WorkoutPlan(
     val id: Int,
+    var title: String,
+    var exercisesList: List<Exercise>? // User does not have to specify which exercises are done
+)
+
+data class Workout(
+    val id: Int,
+    val workoutPlanId: Int,
     val startDate: Date,
+    val endDate: Date?,
     val totalWeight: Int,
-    val exercises: List<Exercise>
+    val exercises: List<Exercise>?
 )
 
 data class Exercise(

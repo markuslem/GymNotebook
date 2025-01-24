@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -16,24 +15,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gymnotebook.ui.theme.GymNotebookTheme
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import com.example.gymnotebook.data.DataSource
+import com.example.gymnotebook.ui.theme.GymNotebookTheme
 
+/* When the user wants to record a new workout, there are 2 options
+1. Quick start - starting a workout without any exercises (exercises can be added during the process)
+2. Select a previously composed workout plan.
+ */
 @Composable
 fun RecordWorkoutScreen(
     modifier: Modifier = Modifier,
-    onEmptyWorkoutButtonClicked: () -> Unit
+    onQuickStartBtnClicked: () -> Unit,
+    startWorkout: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -43,7 +43,7 @@ fun RecordWorkoutScreen(
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = { onEmptyWorkoutButtonClicked() },
+                    onClick = onQuickStartBtnClicked,
                     modifier = Modifier
                         .size(180.dp)
                         .align(Alignment.Center),
@@ -72,19 +72,20 @@ fun RecordWorkoutScreen(
                 }
             }
         }
-        WorkoutCards()
+        workoutCards(startWorkout)
     }
 
 }
 
-fun LazyListScope.WorkoutCards() {
+fun LazyListScope.workoutCards(startWorkout: (Int) -> Unit) {
     items(DataSource.workoutPlans) { item ->
         WorkoutCard(
             workoutPlan = item,
             modifier = Modifier.padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
-            )
+            ),
+            startWorkout = startWorkout
         )
     }
 }
@@ -96,7 +97,8 @@ fun RecordWorkoutScreenPreview() {
         RecordWorkoutScreen(
             modifier = Modifier
                 .fillMaxSize(),
-            onEmptyWorkoutButtonClicked = {}
+            onQuickStartBtnClicked = {},
+            startWorkout = { _ -> }
         )
     }
 }
