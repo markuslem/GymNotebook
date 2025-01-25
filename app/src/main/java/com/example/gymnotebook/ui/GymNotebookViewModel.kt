@@ -23,34 +23,33 @@ class GymNotebookViewModel : ViewModel() {
     }
 
     fun startWorkout(workoutPlanId: Int) {
-        Log.d("WORKOUT_STARTED", "Started a new workout with ID: $workoutPlanId")
+        Log.d("WORKOUT", "Started a new workout with workout plan ID: $workoutPlanId")
         // Getting exercises from the workout plan
         _uiState.update { currentState ->
             val workoutPlan = currentState.workoutPlans?.get(workoutPlanId)
             val exercises = workoutPlan?.exercisesList
             val newWorkout = Workout(
-                id = -1,
                 workoutPlanId = workoutPlanId,
                 startDate = Date(),
                 endDate = null,
                 totalWeight = 0,
                 exercises = exercises
             )
-            Log.d("WORKOUT_STARTED", "Created a new workout object: $newWorkout")
+            currentState.allWorkouts?.put(newWorkout.workoutId, newWorkout)
+            Log.d("WORKOUT", "New workout object is added to HM: $newWorkout")
             currentState.copy(
-                // Adding the created workout to the list of workouts
+                // Keeps track of the active workout ID to access it later conveniently
                 currentExercises = newWorkout.exercises,
-                allWorkouts = currentState.allWorkouts?.plus(newWorkout)
+                onGoingWorkoutId = newWorkout.workoutId
             )
         }
     }
 
     fun changeWeight(exerciseId: Int, setId: Int, newWeight: String) {
-        Log.d("WORKOUT_STARTED", "Updating exercise: $exerciseId, set: $setId with $newWeight")
+        Log.d("WORKOUT", "Updating exercise: $exerciseId, set: $setId with $newWeight")
         _uiState.update { currentState ->
             currentState.copy(
                 // Finding the exercise and set with the right IDs
-                // TODO: replace with hashmap - weights
 
                 currentExercises = currentState.currentExercises?.map { exercise ->
                     if (exercise.id == exerciseId) {
@@ -71,7 +70,6 @@ class GymNotebookViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 // Finding the exercise and set with the right IDs
-                // TODO: replace with hashmap - reps
 
                 currentExercises = currentState.currentExercises?.map { exercise ->
                     if (exercise.id == exerciseId) {
@@ -90,17 +88,34 @@ class GymNotebookViewModel : ViewModel() {
     }
 
     fun finishWorkout() {
-        /* Finishing the workout with the current ID
-        * Saving the information about the workout to the completedWorkout object/table
+        /* Finishing the workout with the currently active UUID.
+        * Writing end date and calculating total weight lifted.
+        * Removing workout info from currentState currentExercises and onGoingWorkoutId fields.
         */
         _uiState.update { currentState ->
+
+            // Calculation of total weight lifted
             val totalWeight = currentState.currentExercises?.sumOf { exercise ->
                 exercise.sets.sumOf { it.weight.toDouble() * it.reps.toDouble() }
-            }?.toFloat() ?: 0f
+            }?.toInt() ?: 0
+
+            // Writing totalWeight and end date to the workout object
+            val currentWorkout = currentState.allWorkouts?.get(currentState.onGoingWorkoutId)
+            if (currentWorkout == null) {
+                Log.e(
+                    "WORKOUT",
+                    "Didn't find a workout UUID: ${currentState.onGoingWorkoutId}"
+                )
+            } else {
+                currentWorkout.endDate = Date()
+                currentWorkout.totalWeight = totalWeight
+            }
+
+            Log.d("WORKOUT", "Successfully finished workout UUID: ${currentWorkout?.workoutId}")
             currentState.copy(
 //                completedWorkouts = currentState.completedWorkouts.
-
-
+                currentExercises = listOf(),
+                onGoingWorkoutId = null // Shows that there is no workout going on
             )
         }
     }

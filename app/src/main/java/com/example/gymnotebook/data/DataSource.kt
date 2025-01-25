@@ -1,4 +1,5 @@
 package com.example.gymnotebook.data
+
 val set1 = SetOfExercise(1, 10, 100.0f, true)
 val set2 = SetOfExercise(2, 11, 40.0f, false)
 val setOfExercise = listOf(set1, set2)
@@ -11,7 +12,7 @@ object DataSource {
         WorkoutPlan(
             title = "Full body",
             exercisesList = listOf(
-                exercise1, exercise2, exercise3
+                exercise1, exercise2, exercise3, exercise1, exercise2, exercise3,
             ),
             id = 1
         ),
@@ -46,9 +47,9 @@ object DataSource {
 }
 
 fun workoutPlansToHashMap(workoutPlans: List<WorkoutPlan>): HashMap<Int, WorkoutPlan> {
-    var hm = HashMap<Int, WorkoutPlan>()
+    val hm = HashMap<Int, WorkoutPlan>()
     for (plan in workoutPlans) {
-        hm.put(plan.id, plan)
+        hm[plan.id] = plan
     }
     return hm
 }

@@ -72,6 +72,7 @@ fun GymNotebookApp(
                     },
                     uiState = uiState,
                     onWorkoutFinished = {
+                        navController.navigate(AppScreen.RecordWorkout.name)
                         viewModel.finishWorkout()
                     }
                 )

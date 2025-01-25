@@ -1,6 +1,7 @@
 package com.example.gymnotebook.data
 
 import java.util.Date
+import java.util.UUID
 
 data class WorkoutPlan(
     val id: Int,
@@ -9,11 +10,11 @@ data class WorkoutPlan(
 )
 
 data class Workout(
-    val id: Int,
+    val workoutId: UUID = UUID.randomUUID(),
     val workoutPlanId: Int,
     val startDate: Date,
-    val endDate: Date?,
-    val totalWeight: Int,
+    var endDate: Date?,
+    var totalWeight: Int,
     val exercises: List<Exercise>?
 )
 
