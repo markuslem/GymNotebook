@@ -1,4 +1,4 @@
-package com.example.gymnotebook.ui
+package com.example.gymnotebook.ui.cards
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,23 +25,22 @@ import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.Exercise
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 import com.example.gymnotebook.data.SetOfExercise
+import java.util.UUID
 
+/* Displayed in the ongoing workout page */
 @Composable
 fun ExerciseCard(
     modifier: Modifier = Modifier,
     exercise: Exercise,
     sets: List<SetOfExercise>,
     done: Boolean = false,
-    onWeightChanged: (Int, Int, String) -> Unit,
-    onRepsChanged: (Int, Int, String) -> Unit,
+    onWeightChanged: (UUID, Int, String) -> Unit,
+    onRepsChanged: (UUID, Int, String) -> Unit,
     uiState: AppUiState
 ) {
     Card(modifier = modifier) {
-        var weightValue by remember { mutableStateOf("1000") }
-        var repetitions by remember { mutableStateOf("4") }
-
         Column(modifier = Modifier.padding(20.dp)) {
-            Text(text = exercise.name)
+            Text(text = exercise.desc.name)
 
             HorizontalDivider(color = Color.Gray)
             Spacer(modifier = Modifier.size(12.dp))
@@ -58,7 +57,7 @@ fun ExerciseCard(
                             modifier = Modifier.width(120.dp),
                             value = set.weight.toString(),
                             onValueChange = { newWeight ->
-                                onWeightChanged(exercise.id, set.id, newWeight)
+                                onWeightChanged(exercise.exerciseId, set.id, newWeight)
                             }
                         )
                         Spacer(modifier = Modifier.size(16.dp))
@@ -66,9 +65,10 @@ fun ExerciseCard(
                             modifier = Modifier.width(120.dp),
                             value = set.reps.toString(),
                             onValueChange = { newReps ->
-                                onRepsChanged(exercise.id, set.id, newReps)
+                                onRepsChanged(exercise.exerciseId, set.id, newReps)
                             }
                         )
+                        // TODO: add task completed checkbox
                     }
                 }
             }
@@ -81,11 +81,6 @@ fun ExerciseCard(
 @Preview
 @Composable
 fun ExerciseCardPreview() {
-//    var setsExample = listOf(
-//        SetOfExercise(80, 10.0F, false),
-//        SetOfExercise(100, 4.0F, true)
-//    )
-
     GymNotebookTheme {
         // Picking an exercise from the workout plans
         val exercise = DataSource.workoutPlans[0].exercisesList?.get(0)

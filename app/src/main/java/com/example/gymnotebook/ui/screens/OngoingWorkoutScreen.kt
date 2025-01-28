@@ -1,4 +1,4 @@
-package com.example.gymnotebook.ui;
+package com.example.gymnotebook.ui.screens;
 
 import android.util.Log
 import androidx.compose.foundation.layout.Row
@@ -17,17 +17,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.AppUiState
+import com.example.gymnotebook.data.Exercise
+import com.example.gymnotebook.ui.cards.ExerciseCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
+import java.util.UUID
 
 @Composable
 fun OngoingWorkoutScreen(
     modifier: Modifier = Modifier.padding(24.dp),
-    onWeightChanged: (Int, Int, String) -> Unit,
-    onRepsChanged: (Int, Int, String) -> Unit,
+    onWeightChanged: (UUID, Int, String) -> Unit,
+    onRepsChanged: (UUID, Int, String) -> Unit,
     onWorkoutFinished: () -> Unit,
-    uiState: AppUiState
+    uiState: AppUiState,
+    addExercise: () -> Unit
 ) {
-    val exercises = uiState.currentExercises ?: emptyList()
+    val exercises: List<Exercise> = uiState.currentExercises ?: listOf()
     /* Displaying all exercises with their sets (weights and reps included) from the currently
     selected precomposed workout.
     In the future TODO: new sets can be added when the workout is in progress
@@ -40,7 +44,7 @@ fun OngoingWorkoutScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(items = exercises, itemContent = { exercise ->
-            Log.d("COMPOSE", "This get rendered ${exercise.name}")
+            Log.d("COMPOSE", "This got rendered ${exercise.desc.name}")
             ExerciseCard(
                 exercise = exercise,
                 onWeightChanged = onWeightChanged,
@@ -55,7 +59,7 @@ fun OngoingWorkoutScreen(
         items(items = listOf(1), itemContent = {
             Row(modifier = Modifier.padding(8.dp)) {
                 Button(
-                    onClick = {},
+                    onClick = addExercise,
                     modifier = Modifier,
                 ) {
                     Text("Add exercise")
@@ -78,10 +82,11 @@ fun OngoingWorkoutScreen(
 fun OngoingWorkoutScreenPreview() {
     GymNotebookTheme {
         OngoingWorkoutScreen(
-            onWeightChanged = { i: Int, i1: Int, s: String -> },
-            onRepsChanged = { i: Int, i1: Int, s: String -> },
+            onWeightChanged = { i: UUID, i1: Int, s: String -> },
+            onRepsChanged = { i: UUID, i1: Int, s: String -> },
+            onWorkoutFinished = {},
             uiState = AppUiState(),
-            onWorkoutFinished = {}
+            addExercise = {},
         )
     }
 }

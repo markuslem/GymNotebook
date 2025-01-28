@@ -1,7 +1,5 @@
-package com.example.gymnotebook
+package com.example.gymnotebook.ui.screens
 
-import android.util.Log
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -15,8 +13,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.gymnotebook.ui.OngoingWorkoutScreen
-import com.example.gymnotebook.ui.RecordWorkoutScreen
 
 enum class AppScreen(barTitle: String) {
     RecordWorkout(barTitle = "Record a new workout"),
@@ -74,7 +70,23 @@ fun GymNotebookApp(
                     onWorkoutFinished = {
                         navController.navigate(AppScreen.RecordWorkout.name)
                         viewModel.finishWorkout()
+                    },
+                    addExercise = {
+                        navController.navigate(AppScreen.Exercises.name)
                     }
+                )
+            }
+
+            /* Screen displaying all exercises */
+            composable(route = AppScreen.Exercises.name) {
+                ExerciseSelectionScreen(
+                    allExercises = uiState.allExercises,
+                    addSelectedExercise = { exercise ->
+                        navController.navigate(AppScreen.OngoingWorkout.name)
+                        // Adding the exercise which is currently selected in ExerciseSelectionScreen
+                        viewModel.addExerciseToOngoing(exercise)
+                    },
+                    cancelExerciseSelection = { navController.navigate(AppScreen.OngoingWorkout.name) }
                 )
             }
 

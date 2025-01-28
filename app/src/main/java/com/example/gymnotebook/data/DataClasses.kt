@@ -18,10 +18,10 @@ data class Workout(
     val exercises: List<Exercise>?
 )
 
+// Exercise with sets that is in progress or in a workout plan
 data class Exercise(
-    val id: Int,
-    val name: String,
-    val category: String,
+    val exerciseId: UUID = UUID.randomUUID(),
+    val desc: ExerciseDesc,
     val sets: List<SetOfExercise>
 )
 
@@ -31,3 +31,11 @@ data class SetOfExercise(
     var weight: Float,
     var done: Boolean
 )
+
+// General information about the exercise
+data class ExerciseDesc(
+    val descId: UUID = UUID.randomUUID(),
+    val name: String,
+    val category: String,
+)
+

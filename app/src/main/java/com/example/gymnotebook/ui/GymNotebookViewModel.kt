@@ -3,12 +3,15 @@ package com.example.gymnotebook.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.gymnotebook.data.AppUiState
+import com.example.gymnotebook.data.Exercise
+import com.example.gymnotebook.data.ExerciseDesc
 import com.example.gymnotebook.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
+import java.util.UUID
 
 class GymNotebookViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
@@ -45,14 +48,14 @@ class GymNotebookViewModel : ViewModel() {
         }
     }
 
-    fun changeWeight(exerciseId: Int, setId: Int, newWeight: String) {
+    fun changeWeight(exerciseId: UUID, setId: Int, newWeight: String) {
         Log.d("WORKOUT", "Updating exercise: $exerciseId, set: $setId with $newWeight")
         _uiState.update { currentState ->
             currentState.copy(
                 // Finding the exercise and set with the right IDs
 
                 currentExercises = currentState.currentExercises?.map { exercise ->
-                    if (exercise.id == exerciseId) {
+                    if (exercise.exerciseId == exerciseId) {
                         exercise.copy(
                             sets = exercise.sets.map { set ->
                                 if (set.id == setId) set.copy(weight = newWeight.toFloat()) else set
@@ -66,13 +69,19 @@ class GymNotebookViewModel : ViewModel() {
         }
     }
 
-    fun changeReps(exerciseId: Int, setId: Int, newReps: String) {
+    /**
+     * Changing the repetition count from one positive integer to another
+     * @param exerciseId The UUID of the exercise object
+     * @param setId UUID of the set where the value should change
+     * @param newReps Input in the form of a String from the user
+     */
+    fun changeReps(exerciseId: UUID, setId: Int, newReps: String) {
         _uiState.update { currentState ->
             currentState.copy(
                 // Finding the exercise and set with the right IDs
 
                 currentExercises = currentState.currentExercises?.map { exercise ->
-                    if (exercise.id == exerciseId) {
+                    if (exercise.exerciseId == exerciseId) {
                         exercise.copy(
                             sets = exercise.sets.map { set ->
                                 if (set.id == setId) set.copy(reps = newReps.toInt()) else set
@@ -118,5 +127,20 @@ class GymNotebookViewModel : ViewModel() {
                 onGoingWorkoutId = null // Shows that there is no workout going on
             )
         }
+    }
+
+    // Adding exercise to list of ongoing exercises
+    fun addExerciseToOngoing(exerciseDesc: ExerciseDesc?) {
+        if (exerciseDesc == null) {
+            Log.d("SELECTION", "There was no selected exercise")
+            return
+        }
+        val addedExercise = Exercise(desc = exerciseDesc, sets = listOf())
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentExercises = _uiState.value.currentExercises?.plus(addedExercise)
+            )
+        }
+        Log.d("SELECTION", "Added exercise: $addedExercise to current workout")
     }
 }

@@ -1,4 +1,4 @@
-package com.example.gymnotebook.ui
+package com.example.gymnotebook.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.DataSource
+import com.example.gymnotebook.ui.cards.WorkoutCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 
 /* When the user wants to record a new workout, there are 2 options

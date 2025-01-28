@@ -1,4 +1,4 @@
-package com.example.gymnotebook.ui
+package com.example.gymnotebook.ui.cards
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +36,7 @@ fun WorkoutCard(
 
             workoutPlan.exercisesList?.let { exercises ->
                 exercises.forEach { exercise ->
-                    Text(text = exercise.name)
+                    Text(text = exercise.desc.name)
                 }
             } ?: run {
                 Text(
