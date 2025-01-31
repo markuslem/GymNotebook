@@ -17,12 +17,13 @@ import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.WorkoutPlan
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
+import java.util.UUID
 
 @Composable
 fun WorkoutCard(
     modifier: Modifier = Modifier,
     workoutPlan: WorkoutPlan,
-    startWorkout: (Int) -> Unit
+    startWorkout: (UUID) -> Unit
 ) {
     Card(modifier = modifier,
         onClick = { startWorkout(workoutPlan.id) }

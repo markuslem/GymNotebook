@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.gymnotebook.data.AppUiState
 import com.example.gymnotebook.data.Exercise
 import com.example.gymnotebook.data.ExerciseDesc
+import com.example.gymnotebook.data.SetOfExercise
 import com.example.gymnotebook.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,15 +18,8 @@ class GymNotebookViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
-    fun addExercise(id: Int) {
-        _uiState.update { currentState ->
-            currentState.copy(
 
-            )
-        }
-    }
-
-    fun startWorkout(workoutPlanId: Int) {
+    fun startWorkout(workoutPlanId: UUID) {
         Log.d("WORKOUT", "Started a new workout with workout plan ID: $workoutPlanId")
         // Getting exercises from the workout plan
         _uiState.update { currentState ->
@@ -48,7 +42,7 @@ class GymNotebookViewModel : ViewModel() {
         }
     }
 
-    fun changeWeight(exerciseId: UUID, setId: Int, newWeight: String) {
+    fun changeWeight(exerciseId: UUID, setId: UUID, newWeight: Float) {
         Log.d("WORKOUT", "Updating exercise: $exerciseId, set: $setId with $newWeight")
         _uiState.update { currentState ->
             currentState.copy(
@@ -75,7 +69,7 @@ class GymNotebookViewModel : ViewModel() {
      * @param setId UUID of the set where the value should change
      * @param newReps Input in the form of a String from the user
      */
-    fun changeReps(exerciseId: UUID, setId: Int, newReps: String) {
+    fun changeReps(exerciseId: UUID, setId: UUID, newReps: Int) {
         _uiState.update { currentState ->
             currentState.copy(
                 // Finding the exercise and set with the right IDs
@@ -142,5 +136,27 @@ class GymNotebookViewModel : ViewModel() {
             )
         }
         Log.d("SELECTION", "Added exercise: $addedExercise to current workout")
+    }
+
+    fun addSetToOngoing(exerciseId: UUID) {
+        Log.d("SELECTION", "Adding new set to exercise UUID: $exerciseId")
+        _uiState.update { currentState ->
+            val newSet = SetOfExercise(
+                reps = 0,
+                weight = 0f,
+                done = false
+            )
+            currentState.copy(
+                currentExercises = currentState.currentExercises?.map { exercise ->
+                    if (exercise.exerciseId == exerciseId) {
+                        exercise.copy(
+                            sets = exercise.sets + (newSet)
+                        )
+                    } else {
+                        exercise
+                    }
+                }
+            )
+        }
     }
 }

@@ -73,6 +73,9 @@ fun GymNotebookApp(
                     },
                     addExercise = {
                         navController.navigate(AppScreen.Exercises.name)
+                    },
+                    addSet = { id ->
+                        viewModel.addSetToOngoing(id)
                     }
                 )
             }

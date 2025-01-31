@@ -4,14 +4,14 @@ import java.util.Date
 import java.util.UUID
 
 data class WorkoutPlan(
-    val id: Int,
+    val id: UUID = UUID.randomUUID(),
     var title: String,
     var exercisesList: List<Exercise>? // User does not have to specify which exercises are done
 )
 
 data class Workout(
     val workoutId: UUID = UUID.randomUUID(),
-    val workoutPlanId: Int,
+    val workoutPlanId: UUID,
     val startDate: Date,
     var endDate: Date?,
     var totalWeight: Int,
@@ -26,7 +26,7 @@ data class Exercise(
 )
 
 data class SetOfExercise(
-    val id: Int,
+    val id: UUID = UUID.randomUUID(),
     var reps: Int,
     var weight: Float,
     var done: Boolean

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.ui.cards.WorkoutCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
+import java.util.UUID
 
 /* When the user wants to record a new workout, there are 2 options
 1. Quick start - starting a workout without any exercises (exercises can be added during the process)
@@ -32,9 +33,8 @@ import com.example.gymnotebook.ui.theme.GymNotebookTheme
  */
 @Composable
 fun RecordWorkoutScreen(
-    modifier: Modifier = Modifier,
     onQuickStartBtnClicked: () -> Unit,
-    startWorkout: (Int) -> Unit
+    startWorkout: (UUID) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -78,7 +78,7 @@ fun RecordWorkoutScreen(
 
 }
 
-fun LazyListScope.workoutCards(startWorkout: (Int) -> Unit) {
+fun LazyListScope.workoutCards(startWorkout: (UUID) -> Unit) {
     items(DataSource.workoutPlans) { item ->
         WorkoutCard(
             workoutPlan = item,
@@ -96,8 +96,6 @@ fun LazyListScope.workoutCards(startWorkout: (Int) -> Unit) {
 fun RecordWorkoutScreenPreview() {
     GymNotebookTheme {
         RecordWorkoutScreen(
-            modifier = Modifier
-                .fillMaxSize(),
             onQuickStartBtnClicked = {},
             startWorkout = { _ -> }
         )
