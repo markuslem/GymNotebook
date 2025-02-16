@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.DataSource
-import com.example.gymnotebook.ui.cards.WorkoutCard
+import com.example.gymnotebook.ui.cards.WorkoutPlanCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 import java.util.UUID
 
@@ -33,8 +33,8 @@ import java.util.UUID
  */
 @Composable
 fun RecordWorkoutScreen(
-    onQuickStartBtnClicked: () -> Unit,
-    startWorkout: (UUID) -> Unit
+    startWorkout: (UUID) -> Unit,
+    quickStartWorkout: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -44,7 +44,7 @@ fun RecordWorkoutScreen(
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = onQuickStartBtnClicked,
+                    onClick = quickStartWorkout,
                     modifier = Modifier
                         .size(180.dp)
                         .align(Alignment.Center),
@@ -80,7 +80,7 @@ fun RecordWorkoutScreen(
 
 fun LazyListScope.workoutCards(startWorkout: (UUID) -> Unit) {
     items(DataSource.workoutPlans) { item ->
-        WorkoutCard(
+        WorkoutPlanCard(
             workoutPlan = item,
             modifier = Modifier.padding(
                 horizontal = 16.dp,
@@ -96,8 +96,8 @@ fun LazyListScope.workoutCards(startWorkout: (UUID) -> Unit) {
 fun RecordWorkoutScreenPreview() {
     GymNotebookTheme {
         RecordWorkoutScreen(
-            onQuickStartBtnClicked = {},
-            startWorkout = { _ -> }
+            startWorkout = { _ -> },
+            quickStartWorkout = { }
         )
     }
 }

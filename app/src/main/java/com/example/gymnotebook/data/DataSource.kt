@@ -1,5 +1,6 @@
 package com.example.gymnotebook.data
 
+import java.util.Date
 import java.util.UUID
 
 val set1 = SetOfExercise(reps = 10, weight = 100.0f, done = true)
@@ -29,7 +30,7 @@ object DataSource {
         ),
         WorkoutPlan(
             title = "Chess",
-            exercisesList = null,
+            exercisesList = listOf(),
         ),
         WorkoutPlan(
             title = "Legs",
@@ -46,6 +47,7 @@ object DataSource {
     )
     val workoutPlansHM: HashMap<UUID, WorkoutPlan> = workoutPlansToHashMap(workoutPlans)
     val allExercisesHM: HashMap<UUID, ExerciseDesc> = allExercisesToHM(listOf(desc1, desc2, desc3))
+    val exampleWorkouts: HashMap<UUID, Workout> = newWorkouts(workoutPlans[0])
 }
 
 fun workoutPlansToHashMap(workoutPlans: List<WorkoutPlan>): HashMap<UUID, WorkoutPlan> {
@@ -61,5 +63,26 @@ fun allExercisesToHM(exercises: List<ExerciseDesc>): HashMap<UUID, ExerciseDesc>
     for (exercise in exercises) {
         hm[exercise.descId] = exercise
     }
+    return hm
+}
+
+fun newWorkouts(workoutPlan : WorkoutPlan): HashMap<UUID, Workout> {
+    val hm = HashMap<UUID, Workout>()
+    val workout1 = Workout(
+        title = workoutPlan.title,
+        startDate = Date(),
+        endDate = Date(),
+        totalWeight = 100,
+        exercises = workoutPlan.exercisesList
+    )
+    val workout2 = Workout(
+        title = workoutPlan.title,
+        startDate = Date(),
+        endDate = Date(),
+        totalWeight = 100,
+        exercises = workoutPlan.exercisesList
+    )
+    hm[workout1.workoutId] = workout1
+    hm[workout2.workoutId] = workout2
     return hm
 }

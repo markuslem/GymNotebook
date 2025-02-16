@@ -23,22 +23,45 @@ class GymNotebookViewModel : ViewModel() {
         Log.d("WORKOUT", "Started a new workout with workout plan ID: $workoutPlanId")
         // Getting exercises from the workout plan
         _uiState.update { currentState ->
-            val workoutPlan = currentState.workoutPlans?.get(workoutPlanId)
+            val workoutPlan = currentState.workoutPlans.get(workoutPlanId)
             val exercises = workoutPlan?.exercisesList
             val newWorkout = Workout(
-                workoutPlanId = workoutPlanId,
+                title = workoutPlan?.title ?: "Unnamed workout",
                 startDate = Date(),
                 endDate = null,
                 totalWeight = 0,
-                exercises = exercises
+                exercises = exercises ?: listOf()
             )
-            currentState.allWorkouts?.put(newWorkout.workoutId, newWorkout)
+            currentState.allWorkouts.put(newWorkout.workoutId, newWorkout)
             Log.d("WORKOUT", "New workout object is added to HM: $newWorkout")
             currentState.copy(
                 // Keeps track of the active workout ID to access it later conveniently
                 currentExercises = newWorkout.exercises,
                 onGoingWorkoutId = newWorkout.workoutId
             )
+        }
+    }
+
+    fun quickStartWorkout() {
+        Log.d("WORKOUT", "Quick started a new workout")
+        val newWorkout = Workout(
+            title = "Quick start",
+            startDate = Date(),
+            endDate = null,
+            totalWeight = 0,
+            exercises = listOf()
+        )
+
+        // Creating a new workout
+        _uiState.update { currentState ->
+            currentState.allWorkouts.put(newWorkout.workoutId, newWorkout)
+            Log.d("WORKOUT", "New workout object is added to HM: $newWorkout")
+            currentState.copy(
+                // Keeps track of the active workout ID to access it later conveniently
+                currentExercises = newWorkout.exercises,
+                onGoingWorkoutId = newWorkout.workoutId
+            )
+
         }
     }
 

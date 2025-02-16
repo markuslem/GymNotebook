@@ -1,18 +1,22 @@
 package com.example.gymnotebook.ui.screens
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.gymnotebook.ui.GymNotebookViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.gymnotebook.ui.GymNotebookViewModel
 
 enum class AppScreen(barTitle: String) {
     RecordWorkout(barTitle = "Record a new workout"),
@@ -32,9 +36,34 @@ fun GymNotebookApp(
     val currentScreen = AppScreen.valueOf(
         backStackEntry?.destination?.route ?: AppScreen.RecordWorkout.name
     )
-
     Scaffold(
-    ) { innerPadding ->
+        /* Bottom navigation bar */
+        bottomBar = {
+            BottomNavigation {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+
+                // List of screens which have a corresponding button in the bottom navigation bar
+                val listOfNavScreens = listOf(AppScreen.RecordWorkout, AppScreen.WorkoutHistory)
+                listOfNavScreens.forEach { screen ->
+                    BottomNavigationItem(selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+                        onClick = {
+                            navController.navigate(screen.name)
+                        },
+                        icon = {
+                            Text(
+                                text = if (screen == AppScreen.RecordWorkout) "Record"
+                                else if (screen == AppScreen.WorkoutHistory) "History"
+                                else screen.name
+                            )
+                        })
+                }
+            }
+        }
+
+
+    )
+    { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
         //RecordWorkoutScreen(modifier = Modifier.padding(innerPadding))
 
@@ -46,14 +75,15 @@ fun GymNotebookApp(
             /* Screen where user can select which workout to choose */
             composable(route = AppScreen.RecordWorkout.name) {
                 RecordWorkoutScreen(
-                    onQuickStartBtnClicked = {
-                        println("test")
-                        navController.navigate(AppScreen.OngoingWorkout.name)
-                    },
+
                     startWorkout = { workoutId ->
                         navController.navigate(AppScreen.OngoingWorkout.name)
                         viewModel.startWorkout(workoutId)
-                    }
+                    },
+                    quickStartWorkout = {
+                        viewModel.quickStartWorkout()
+                        navController.navigate(AppScreen.OngoingWorkout.name)
+                    },
                 )
             }
 
@@ -91,6 +121,11 @@ fun GymNotebookApp(
                     },
                     cancelExerciseSelection = { navController.navigate(AppScreen.OngoingWorkout.name) }
                 )
+            }
+
+            /* Screen displaying all past workouts */
+            composable(route = AppScreen.WorkoutHistory.name) {
+                WorkoutHistory(uiState.allWorkouts)
             }
 
         }

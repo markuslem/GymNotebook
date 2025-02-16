@@ -6,16 +6,16 @@ import java.util.UUID
 data class WorkoutPlan(
     val id: UUID = UUID.randomUUID(),
     var title: String,
-    var exercisesList: List<Exercise>? // User does not have to specify which exercises are done
+    var exercisesList: List<Exercise>
 )
 
 data class Workout(
     val workoutId: UUID = UUID.randomUUID(),
-    val workoutPlanId: UUID,
+    val title: String,
     val startDate: Date,
     var endDate: Date?,
     var totalWeight: Int,
-    val exercises: List<Exercise>?
+    val exercises: List<Exercise>
 )
 
 // Exercise with sets that is in progress or in a workout plan

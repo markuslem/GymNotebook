@@ -1,49 +1,60 @@
 package com.example.gymnotebook.ui.cards
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.gymnotebook.data.DataSource
-import com.example.gymnotebook.data.WorkoutPlan
+import com.example.gymnotebook.data.Workout
+import com.example.gymnotebook.data.workoutPlansToHashMap
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
-import java.util.UUID
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun WorkoutCard(
-    modifier: Modifier = Modifier,
-    workoutPlan: WorkoutPlan,
-    startWorkout: (UUID) -> Unit
-) {
-    Card(modifier = modifier,
-        onClick = { startWorkout(workoutPlan.id) }
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(text = workoutPlan.title)
-
-            HorizontalDivider(color = Color.Gray)
-            Spacer(modifier = Modifier.size(12.dp))
-
-
-            workoutPlan.exercisesList?.let { exercises ->
-                exercises.forEach { exercise ->
-                    Text(text = exercise.desc.name)
-                }
-            } ?: run {
+fun WorkoutCard(workout: Workout) {
+    Card(modifier = Modifier.padding(10.dp)) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Text(workout.title, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+            Text(
+                Date(workout.endDate?.time ?: 0).toString(),
+                fontSize = 16.sp
+            )
+            Text("Total weight: " + workout.totalWeight)
+            Row(modifier = Modifier.padding(bottom = 8.dp)) {
                 Text(
-                    text = "No exercises",
-                    fontStyle = FontStyle.Italic
+                    "Exercises:", modifier = Modifier.weight(1f),
+                    fontWeight = FontWeight.Bold
                 )
+                Text("Heaviest set", fontWeight = FontWeight.Bold)
+            }
+            if (workout.exercises != null) {
+                for (exer in workout.exercises) {
+                    Row {
+                        Text(exer.desc.name, modifier = Modifier.weight(1f))
+                        // Displaying the set with the heaviest weight
+                        if (exer.sets.isNotEmpty()) {
+                            // TODO: The first set is displayed as the heaviest right now. It should be an attribute.
+                            val setInfo = exer.sets[0].weight.toString() + " kg x " + exer.sets[0].reps.toString()
+                            Text(setInfo)
+                        }
+                    }
+                }
             }
         }
     }
@@ -54,10 +65,7 @@ fun WorkoutCard(
 fun WorkoutCardPreview() {
     GymNotebookTheme {
         WorkoutCard(
-            modifier = Modifier
-                .fillMaxWidth(),
-            workoutPlan = DataSource.workoutPlans[0],
-            startWorkout = {}
+            workout = DataSource.exampleWorkouts.values.toList()[0]
         )
     }
 }
