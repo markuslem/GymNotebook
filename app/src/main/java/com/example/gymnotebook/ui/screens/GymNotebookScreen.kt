@@ -96,7 +96,7 @@ fun GymNotebookApp(
                     onRepsChanged = { exerciseId, setId, newReps ->
                         viewModel.changeReps(exerciseId, setId, newReps)
                     },
-                    uiState = uiState,
+                    exercises = uiState.currentExercises ?: listOf(),
                     onWorkoutFinished = {
                         navController.navigate(AppScreen.RecordWorkout.name)
                         viewModel.finishWorkout()

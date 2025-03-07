@@ -10,14 +10,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,11 +49,11 @@ fun ExerciseCard(
     val weightValueStrs =
         remember { mutableStateListOf(*Array(sets.size) { sets[it].weight.toString() }) }
     // Weight is valid if it got updated in the viewmodel the last time the user updated the value
-    val isWeightValid = remember { mutableStateListOf(*Array(sets.size) { false }) }
+    val isWeightValid = remember { mutableStateListOf(*Array(sets.size) { true }) }
 
     val repsValueStrs =
         remember { mutableStateListOf(*Array(sets.size) { sets[it].reps.toString() }) }
-    val isRepsValid = remember { mutableStateListOf(*Array(sets.size) { false }) }
+    val isRepsValid = remember { mutableStateListOf(*Array(sets.size) { true }) }
 
     Card(modifier = modifier) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -65,6 +70,8 @@ fun ExerciseCard(
             ) {
                 sets.forEachIndexed { index, set ->
                     Row {
+                        // Whether the checkbox is checked or not
+                        var checked by remember { mutableStateOf(false) }
                         TextField(
                             modifier = Modifier.width(120.dp),
                             value = weightValueStrs[index],
@@ -73,6 +80,7 @@ fun ExerciseCard(
                                 // In case of an empty string the weight value will not get updated in viewmodel
                                 val inAcceptableFormat = doublePattern.matches(newWeight)
                                 isWeightValid[index] = false
+                                checked = false // Since value is changed
                                 // TODO: if weight is invalid: task completed == false
                                 if (inAcceptableFormat) {
                                     if (newWeight != "") {
@@ -94,6 +102,7 @@ fun ExerciseCard(
                             value = repsValueStrs[index],
                             onValueChange = { newReps ->
                                 val newRepsInt = newReps.toIntOrNull()
+                                checked = false // Since value is changed
                                 if (newRepsInt == null) { // Most likely entered an empty string
                                     isRepsValid[index] = false
                                     // TODO: task completed = false
@@ -106,7 +115,12 @@ fun ExerciseCard(
                             },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
-                        // TODO: add task completed checkbox
+                        // Task completed checkbox
+                        Checkbox(modifier = Modifier
+                            .scale(1.5f)
+                            .padding(start = 16.dp, top = 8.dp),
+                            checked = checked, onCheckedChange =
+                            { if (isRepsValid[index] && isWeightValid[index]) checked = it })
                     }
                 }
 

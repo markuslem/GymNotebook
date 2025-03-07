@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.AppUiState
+import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.Exercise
 import com.example.gymnotebook.ui.cards.ExerciseCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
@@ -28,15 +29,15 @@ fun OngoingWorkoutScreen(
     onWeightChanged: (UUID, UUID, Float) -> Unit,
     onRepsChanged: (UUID, UUID, Int) -> Unit,
     onWorkoutFinished: () -> Unit,
-    uiState: AppUiState,
+    exercises: List<Exercise>,
     addExercise: () -> Unit,
     addSet: (UUID) -> Unit,
 ) {
-    val exercises: List<Exercise> = uiState.currentExercises?.toList() ?: listOf()
     /* Displaying all exercises with their sets (weights and reps included) from the currently
     selected precomposed workout.
-    In the future TODO: new sets can be added when the workout is in progress
+    In the future
                   TODO: new sets can be removed when the workout is in progress
+                  TODO: sets have a done button
     */
     LazyColumn(
         modifier = Modifier
@@ -86,7 +87,7 @@ fun OngoingWorkoutScreenPreview() {
             onWeightChanged = { _: UUID, _: UUID, _: Float -> },
             onRepsChanged = { _: UUID, _: UUID, _: Int -> },
             onWorkoutFinished = {},
-            uiState = AppUiState(),
+            exercises = DataSource.workoutPlansHM.values.toList()[0].exercisesList,
             addExercise = {},
             addSet = {},
         )
