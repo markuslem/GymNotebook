@@ -75,7 +75,7 @@ class GymNotebookViewModel : ViewModel() {
                     if (exercise.exerciseId == exerciseId) {
                         exercise.copy(
                             sets = exercise.sets.map { set ->
-                                if (set.id == setId) set.copy(weight = newWeight.toFloat()) else set
+                                if (set.id == setId) set.copy(weight = newWeight) else set
                             }
                         )
                     } else {
@@ -101,7 +101,7 @@ class GymNotebookViewModel : ViewModel() {
                     if (exercise.exerciseId == exerciseId) {
                         exercise.copy(
                             sets = exercise.sets.map { set ->
-                                if (set.id == setId) set.copy(reps = newReps.toInt()) else set
+                                if (set.id == setId) set.copy(reps = newReps) else set
                             }
                         )
                     } else {
@@ -126,7 +126,11 @@ class GymNotebookViewModel : ViewModel() {
             }?.toInt() ?: 0
 
             // Writing totalWeight and end date to the workout object
-            val currentWorkout = currentState.allWorkouts?.get(currentState.onGoingWorkoutId)
+            val currentWorkout = currentState.allWorkouts[currentState.onGoingWorkoutId]
+            Log.i(
+                "WORKOUT",
+                "Added endDate, totalWeight and done exercises to workout: {onGoingWorkoutId: ${currentWorkout?.workoutId}, title: ${currentWorkout?.title}, exercises: ${currentWorkout?.exercises}}"
+            )
             if (currentWorkout == null) {
                 Log.e(
                     "WORKOUT",
@@ -135,6 +139,20 @@ class GymNotebookViewModel : ViewModel() {
             } else {
                 currentWorkout.endDate = Date()
                 currentWorkout.totalWeight = totalWeight
+                // Filtering out the exercises that are not done
+                Log.d("WORKOUT", "The sets were: ")
+                currentState.currentExercises?.forEach( {exercise ->
+                    exercise.sets.forEach({Log.d("WORKOUT", "Set: $it")})
+                })
+                currentState.currentExercises?.forEach({
+                        exercise -> exercise.sets = exercise.sets.filter { it.done }
+                })
+                if (currentState.currentExercises != null)
+                    currentWorkout.exercises = currentState.currentExercises ?: listOf()
+                else
+                    currentWorkout.exercises = listOf()
+
+
             }
 
             Log.d("WORKOUT", "Successfully finished workout UUID: ${currentWorkout?.workoutId}")
@@ -149,37 +167,45 @@ class GymNotebookViewModel : ViewModel() {
     // Adding exercise to list of ongoing exercises
     fun addExerciseToOngoing(exerciseDesc: ExerciseDesc?) {
         if (exerciseDesc == null) {
-            Log.d("SELECTION", "There was no selected exercise")
+            Log.d("WORKOUT", "There was no selected exercise")
             return
         }
         val addedExercise = Exercise(desc = exerciseDesc, sets = listOf())
+
         _uiState.update { currentState ->
-            currentState.copy(
-                currentExercises = _uiState.value.currentExercises?.plus(addedExercise)
-            )
+            currentState.currentExercises?.plus(addedExercise)
+            currentState.copy()
         }
-        Log.d("SELECTION", "Added exercise: $addedExercise to current workout")
+        Log.d("WORKOUT", "Added exercise: $addedExercise to current workout")
     }
 
     fun addSetToOngoing(exerciseId: UUID) {
-        Log.d("SELECTION", "Adding new set to exercise UUID: $exerciseId")
+        val newSet = SetOfExercise(
+            reps = 0,
+            weight = 0f,
+            done = false
+        )
         _uiState.update { currentState ->
-            val newSet = SetOfExercise(
-                reps = 0,
-                weight = 0f,
-                done = false
-            )
-            currentState.copy(
-                currentExercises = currentState.currentExercises?.map { exercise ->
-                    if (exercise.exerciseId == exerciseId) {
-                        exercise.copy(
-                            sets = exercise.sets + (newSet)
-                        )
-                    } else {
-                        exercise
-                    }
-                }
-            )
+            val exercise = currentState.currentExercises?.find { it.exerciseId == exerciseId }
+            if (exercise != null) {
+                exercise.sets = exercise.sets.plus(newSet)
+            } else {
+                Log.d("WORKOUT", "Failed to add a new set to exercise: $exerciseId")
+            }
+
+            currentState.copy()
         }
+        Log.d("WORKOUT", "Added new set to exercise: $exerciseId")
+    }
+
+    /* Changing the value of done field in a set */
+    fun doneChanged(exerciseId: UUID, setId: UUID, checked: Boolean) {
+        _uiState.update { currentState ->
+            val set = currentState.currentExercises?.find { it.exerciseId == exerciseId }?.sets?.find { it.id == setId }
+            set?.done = checked
+            currentState.copy()
+        }
+        Log.d("WORKOUT", "changed value to: $checked")
+
     }
 }

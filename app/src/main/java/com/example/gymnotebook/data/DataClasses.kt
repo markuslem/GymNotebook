@@ -15,14 +15,14 @@ data class Workout(
     val startDate: Date,
     var endDate: Date?,
     var totalWeight: Int,
-    val exercises: List<Exercise>
+    var exercises: List<Exercise>
 )
 
 // Exercise with sets that is in progress or in a workout plan
 data class Exercise(
     val exerciseId: UUID = UUID.randomUUID(),
     val desc: ExerciseDesc,
-    val sets: List<SetOfExercise>
+    var sets: List<SetOfExercise>
 )
 
 data class SetOfExercise(

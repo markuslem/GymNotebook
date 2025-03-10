@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.Exercise
 import com.example.gymnotebook.data.SetOfExercise
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
+import java.util.Collections
 import java.util.UUID
 
 /* Displayed in the ongoing workout page */
@@ -39,13 +41,13 @@ fun ExerciseCard(
     modifier: Modifier = Modifier,
     exercise: Exercise,
     sets: List<SetOfExercise>,
-    done: Boolean = false,
     onWeightChanged: (UUID, UUID, Float) -> Unit,
     onRepsChanged: (UUID, UUID, Int) -> Unit,
+    onDoneChanged: (UUID, UUID, Boolean) -> Unit,
     addSet: (UUID) -> Unit
 ) {
-    // Accepts inputs in the formats 0 0. 0.0 and [empty]
-    val doublePattern = Regex("^\\d*\\.?\\d*$")
+    val doublePattern = Regex("^\\d+\\.?\\d*?$") // Accepts inputs in the formats 0 0. and 0.0
+    val integerPattern = Regex("^\\d{1,6}$")
     val weightValueStrs =
         remember { mutableStateListOf(*Array(sets.size) { sets[it].weight.toString() }) }
     // Weight is valid if it got updated in the viewmodel the last time the user updated the value
@@ -54,6 +56,7 @@ fun ExerciseCard(
     val repsValueStrs =
         remember { mutableStateListOf(*Array(sets.size) { sets[it].reps.toString() }) }
     val isRepsValid = remember { mutableStateListOf(*Array(sets.size) { true }) }
+
 
     Card(modifier = modifier) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -79,20 +82,19 @@ fun ExerciseCard(
                                 // Checking if the entered weight value is valid (can be converted to double)
                                 // In case of an empty string the weight value will not get updated in viewmodel
                                 val inAcceptableFormat = doublePattern.matches(newWeight)
-                                isWeightValid[index] = false
                                 checked = false // Since value is changed
-                                // TODO: if weight is invalid: task completed == false
+                                onDoneChanged(exercise.exerciseId, set.id, checked)
                                 if (inAcceptableFormat) {
-                                    if (newWeight != "") {
-                                        onWeightChanged(
-                                            exercise.exerciseId,
-                                            set.id,
-                                            newWeight.toFloat()
-                                        )
-                                        isWeightValid[index] = true
-                                    }
-                                    weightValueStrs[index] = newWeight
+                                    onWeightChanged(
+                                        exercise.exerciseId,
+                                        set.id,
+                                        newWeight.toFloat()
+                                    )
+                                    isWeightValid[index] = true
+                                } else {
+                                    isWeightValid[index] = false
                                 }
+                                weightValueStrs[index] = newWeight
                             },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
@@ -101,17 +103,22 @@ fun ExerciseCard(
                             modifier = Modifier.width(120.dp),
                             value = repsValueStrs[index],
                             onValueChange = { newReps ->
-                                val newRepsInt = newReps.toIntOrNull()
+
+                                val inAcceptableFormat = integerPattern.matches(newReps)
                                 checked = false // Since value is changed
-                                if (newRepsInt == null) { // Most likely entered an empty string
-                                    isRepsValid[index] = false
-                                    // TODO: task completed = false
-                                } else {
-                                    onRepsChanged(exercise.exerciseId, set.id, newRepsInt)
+                                onDoneChanged(exercise.exerciseId, set.id, checked)
+
+                                if (inAcceptableFormat) {
+                                    onRepsChanged(
+                                        exercise.exerciseId,
+                                        set.id,
+                                        newReps.toInt()
+                                    )
                                     isRepsValid[index] = true
+                                } else {
+                                    isRepsValid[index] = false
                                 }
                                 repsValueStrs[index] = newReps
-
                             },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
@@ -120,7 +127,12 @@ fun ExerciseCard(
                             .scale(1.5f)
                             .padding(start = 16.dp, top = 8.dp),
                             checked = checked, onCheckedChange =
-                            { if (isRepsValid[index] && isWeightValid[index]) checked = it })
+                            {
+                                if (isRepsValid[index] && isWeightValid[index]) {
+                                    checked = it
+                                    onDoneChanged(exercise.exerciseId, set.id, it)
+                                }
+                            })
                     }
                 }
 
@@ -161,6 +173,7 @@ fun ExerciseCardPreview() {
                 sets = exercise.sets,
                 onWeightChanged = { _, _, _ -> },
                 onRepsChanged = { _, _, _ -> },
+                onDoneChanged = { _, _, _ -> },
                 addSet = { _ -> },
             )
         }

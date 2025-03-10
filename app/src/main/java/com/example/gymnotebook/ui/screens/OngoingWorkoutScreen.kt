@@ -28,6 +28,7 @@ fun OngoingWorkoutScreen(
     modifier: Modifier = Modifier.padding(24.dp), // TODO: Maybe it should have default value `Modifier`
     onWeightChanged: (UUID, UUID, Float) -> Unit,
     onRepsChanged: (UUID, UUID, Int) -> Unit,
+    onDoneChanged: (UUID, UUID, Boolean) -> Unit,
     onWorkoutFinished: () -> Unit,
     exercises: List<Exercise>,
     addExercise: () -> Unit,
@@ -37,7 +38,6 @@ fun OngoingWorkoutScreen(
     selected precomposed workout.
     In the future
                   TODO: new sets can be removed when the workout is in progress
-                  TODO: sets have a done button
     */
     LazyColumn(
         modifier = Modifier
@@ -49,9 +49,10 @@ fun OngoingWorkoutScreen(
             Log.d("COMPOSE", "This got rendered ${exercise.desc.name}")
             ExerciseCard(
                 exercise = exercise,
-                sets = exercise.sets.toList(),
+                sets = exercise.sets,
                 onWeightChanged = onWeightChanged,
                 onRepsChanged = onRepsChanged,
+                onDoneChanged = onDoneChanged,
                 addSet = addSet,
             )
             Spacer(modifier = Modifier.size(8.dp))
@@ -87,6 +88,7 @@ fun OngoingWorkoutScreenPreview() {
             onWeightChanged = { _: UUID, _: UUID, _: Float -> },
             onRepsChanged = { _: UUID, _: UUID, _: Int -> },
             onWorkoutFinished = {},
+            onDoneChanged = { _, _, _ -> },
             exercises = DataSource.workoutPlansHM.values.toList()[0].exercisesList,
             addExercise = {},
             addSet = {},
