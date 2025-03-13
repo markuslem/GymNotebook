@@ -173,29 +173,33 @@ class GymNotebookViewModel : ViewModel() {
         val addedExercise = Exercise(desc = exerciseDesc, sets = listOf())
 
         _uiState.update { currentState ->
-            currentState.currentExercises?.plus(addedExercise)
-            currentState.copy()
+            currentState.copy(
+                currentExercises = currentState.currentExercises?.plus(addedExercise)
+            )
         }
         Log.d("WORKOUT", "Added exercise: $addedExercise to current workout")
     }
 
     fun addSetToOngoing(exerciseId: UUID) {
-        val newSet = SetOfExercise(
-            reps = 0,
-            weight = 0f,
-            done = false
-        )
+        Log.d("SELECTION", "Adding new set to exercise UUID: $exerciseId")
         _uiState.update { currentState ->
-            val exercise = currentState.currentExercises?.find { it.exerciseId == exerciseId }
-            if (exercise != null) {
-                exercise.sets = exercise.sets.plus(newSet)
-            } else {
-                Log.d("WORKOUT", "Failed to add a new set to exercise: $exerciseId")
-            }
-
-            currentState.copy()
+            val newSet = SetOfExercise(
+                reps = 0,
+                weight = 0f,
+                done = false
+            )
+            currentState.copy(
+                currentExercises = currentState.currentExercises?.map { exercise ->
+                    if (exercise.exerciseId == exerciseId) {
+                        exercise.copy(
+                            sets = exercise.sets + (newSet)
+                        )
+                    } else {
+                        exercise
+                    }
+                }
+            )
         }
-        Log.d("WORKOUT", "Added new set to exercise: $exerciseId")
     }
 
     /* Changing the value of done field in a set */

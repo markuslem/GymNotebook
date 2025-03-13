@@ -16,9 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gymnotebook.data.AppUiState
 import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.Exercise
+import com.example.gymnotebook.data.ExerciseDesc
 import com.example.gymnotebook.ui.cards.ExerciseCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 import java.util.UUID
@@ -31,7 +31,7 @@ fun OngoingWorkoutScreen(
     onDoneChanged: (UUID, UUID, Boolean) -> Unit,
     onWorkoutFinished: () -> Unit,
     exercises: List<Exercise>,
-    addExercise: () -> Unit,
+    chooseExercise: () -> Unit,
     addSet: (UUID) -> Unit,
 ) {
     /* Displaying all exercises with their sets (weights and reps included) from the currently
@@ -62,7 +62,7 @@ fun OngoingWorkoutScreen(
         items(items = listOf(1), itemContent = {
             Row(modifier = Modifier.padding(8.dp)) {
                 Button(
-                    onClick = addExercise,
+                    onClick = chooseExercise,
                     modifier = Modifier,
                 ) {
                     Text("Add exercise")
@@ -87,10 +87,10 @@ fun OngoingWorkoutScreenPreview() {
         OngoingWorkoutScreen(
             onWeightChanged = { _: UUID, _: UUID, _: Float -> },
             onRepsChanged = { _: UUID, _: UUID, _: Int -> },
-            onWorkoutFinished = {},
             onDoneChanged = { _, _, _ -> },
+            onWorkoutFinished = {},
             exercises = DataSource.workoutPlansHM.values.toList()[0].exercisesList,
-            addExercise = {},
+            chooseExercise = {},
             addSet = {},
         )
     }
