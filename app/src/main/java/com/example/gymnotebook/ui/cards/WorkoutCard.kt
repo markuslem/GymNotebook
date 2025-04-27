@@ -1,10 +1,7 @@
 package com.example.gymnotebook.ui.cards
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -16,15 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.Workout
-import com.example.gymnotebook.data.workoutPlansToHashMap
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.Locale
 
 @Composable
 fun WorkoutCard(workout: Workout) {
@@ -35,6 +25,7 @@ fun WorkoutCard(workout: Workout) {
                 Date(workout.endDate?.time ?: 0).toString(),
                 fontSize = 16.sp
             )
+            if (workout.exercises.isNotEmpty()) {
             Text("Total weight: " + workout.totalWeight)
             Row(modifier = Modifier.padding(bottom = 8.dp)) {
                 Text(
@@ -43,7 +34,6 @@ fun WorkoutCard(workout: Workout) {
                 )
                 Text("Heaviest set", fontWeight = FontWeight.Bold)
             }
-            if (workout.exercises != null) {
                 for (exer in workout.exercises) {
                     Row {
                         Text(exer.desc.name, modifier = Modifier.weight(1f))
@@ -55,6 +45,8 @@ fun WorkoutCard(workout: Workout) {
                         }
                     }
                 }
+            } else {
+                Text("No exercises found")
             }
         }
     }

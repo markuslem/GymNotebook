@@ -35,7 +35,9 @@ data class SetOfExercise(
 // General information about the exercise
 data class ExerciseDesc(
     val descId: UUID = UUID.randomUUID(),
-    val name: String,
-    val category: String,
+    val name: String, val force: String?, val level: String,
+    val mechanic: String?, val equipment: String,
+    val primaryMuscles : List<String>, val secondaryMuscles : List<String>,
+    val instructions : List<String>, val category : String
 )
 
