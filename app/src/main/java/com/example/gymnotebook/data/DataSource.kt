@@ -1,21 +1,24 @@
 package com.example.gymnotebook.data
 
+import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import java.io.File
+import java.io.IOException
 import java.util.Date
 import java.util.UUID
 
 fun main() {
     // Creating exercises based on: https://github.com/wrkout/exercises.json.git
-    val filePath = "app/exercises.json"
+    val filePath = "app/src/main/assets/json/exercises.json"
     val exercisesText = File(filePath).readText()
     val gson = Gson()
-
 
     data class JsonExerciseList(val exercises: List<ExerciseDesc>)
 
     val exercisesList = gson.fromJson(exercisesText, JsonExerciseList::class.java)
-    print(exercisesList)
+    val allExercisesHM: HashMap<UUID, ExerciseDesc> = allExercisesToHM(exercisesList.exercises)
+    println(allExercisesHM)
 
 }
 
@@ -121,10 +124,37 @@ object DataSource {
             ),
         )
     )
+
     val workoutPlansHM: HashMap<UUID, WorkoutPlan> = workoutPlansToHashMap(workoutPlans)
-    val allExercisesHM: HashMap<UUID, ExerciseDesc> = allExercisesToHM(listOf(desc1, desc2, desc3))
+
+    data class JsonExerciseList(val exercises: List<ExerciseDesc>)
+    var allExercisesHM: HashMap<UUID, ExerciseDesc> = allExercisesToHM(listOf())
+
     val exampleWorkouts: HashMap<UUID, Workout> = newWorkouts(workoutPlans[0])
+
+
+    var exercisesText: String? = null
+    // The initialization block can use application context
+    fun initialize(context: Context) {
+        val filePath = "json/exercises.json"
+        exercisesText = readTextFromAsset(context, filePath)
+        Log.d("DataSource", "Exercises text: $exercisesText")
+
+        // Adding all Exercises from the JSON file to the HashMap
+        val gson = Gson()
+        val exercisesList = gson.fromJson(exercisesText, JsonExerciseList::class.java)
+        allExercisesHM = allExercisesToHM(exercisesList.exercises)
+    }
+    private fun readTextFromAsset(context: Context, filePath: String): String? {
+        return try {
+            context.assets.open(filePath).bufferedReader().use { it.readText() }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
 }
+
 
 fun workoutPlansToHashMap(workoutPlans: List<WorkoutPlan>): HashMap<UUID, WorkoutPlan> {
     val hm = HashMap<UUID, WorkoutPlan>()
@@ -137,7 +167,18 @@ fun workoutPlansToHashMap(workoutPlans: List<WorkoutPlan>): HashMap<UUID, Workou
 fun allExercisesToHM(exercises: List<ExerciseDesc>): HashMap<UUID, ExerciseDesc> {
     val hm = HashMap<UUID, ExerciseDesc>()
     for (exercise in exercises) {
-        hm[exercise.descId] = exercise
+        val newExercise = ExerciseDesc(
+            name = exercise.name,
+            force = exercise.force,
+            level = exercise.level,
+            mechanic = exercise.mechanic,
+            equipment = exercise.equipment,
+            primaryMuscles = exercise.primaryMuscles,
+            secondaryMuscles = exercise.secondaryMuscles,
+            instructions = exercise.instructions,
+            category = exercise.category
+        )
+        hm[newExercise.descId] = newExercise
     }
     return hm
 }

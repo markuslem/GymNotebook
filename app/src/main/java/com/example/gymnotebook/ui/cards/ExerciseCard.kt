@@ -137,7 +137,7 @@ fun ExerciseCard(
                 }
 
 
-                /* Add new set to the exercise */
+//                 Add new set to the exercise
                 Spacer(modifier = Modifier.size(20.dp))
                 Button(
                     onClick = {

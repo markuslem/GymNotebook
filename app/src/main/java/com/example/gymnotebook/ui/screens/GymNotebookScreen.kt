@@ -21,7 +21,8 @@ import com.example.gymnotebook.ui.GymNotebookViewModel
 enum class AppScreen(barTitle: String) {
     RecordWorkout(barTitle = "Record a new workout"),
     OngoingWorkout(barTitle = "Ongoing workout"),
-    Exercises(barTitle = "Exercises"),
+    ExercisesSelection(barTitle = "Select an exercis"),
+    AllExercises(barTitle = "All exercises"),
     WorkoutHistory(barTitle = "Workout History"),
     WorkoutPlans(barTitle = "Workout Plans"),
     Profile(barTitle = "Profile")
@@ -44,18 +45,14 @@ fun GymNotebookApp(
                 val currentDestination = navBackStackEntry?.destination
 
                 // List of screens which have a corresponding button in the bottom navigation bar
-                val listOfNavScreens = listOf(AppScreen.RecordWorkout, AppScreen.WorkoutHistory)
+                val listOfNavScreens = listOf(AppScreen.RecordWorkout, AppScreen.WorkoutHistory, AppScreen.AllExercises)
                 listOfNavScreens.forEach { screen ->
                     BottomNavigationItem(selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
                         onClick = {
                             navController.navigate(screen.name)
                         },
                         icon = {
-                            Text(
-                                text = if (screen == AppScreen.RecordWorkout) "Record"
-                                else if (screen == AppScreen.WorkoutHistory) "History"
-                                else screen.name
-                            )
+                            Text(screen.name)
                         })
                 }
             }
@@ -105,7 +102,7 @@ fun GymNotebookApp(
                         viewModel.finishWorkout()
                     },
                     chooseExercise = {
-                        navController.navigate(AppScreen.Exercises.name)
+                        navController.navigate(AppScreen.ExercisesSelection.name)
                     },
                     addSet = { id ->
                         viewModel.addSetToOngoing(id)
@@ -113,8 +110,10 @@ fun GymNotebookApp(
                 )
             }
 
-            /* Screen displaying all exercises */
-            composable(route = AppScreen.Exercises.name) {
+            /* Screen displaying all exercises.
+            * The user can select one exercise
+            */
+            composable(route = AppScreen.ExercisesSelection.name) {
                 ExerciseSelectionScreen(
                     allExercises = uiState.allExercises,
                     addSelectedExercise = { desc ->
@@ -129,6 +128,11 @@ fun GymNotebookApp(
             /* Screen displaying all past workouts */
             composable(route = AppScreen.WorkoutHistory.name) {
                 WorkoutHistory(uiState.allWorkouts)
+            }
+
+            /* Screen displaying all exercises */
+            composable(route = AppScreen.AllExercises.name) {
+                AllExercises(allExercises = uiState.allExercises)
             }
 
         }
