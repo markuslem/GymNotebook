@@ -130,6 +130,8 @@ object DataSource {
     data class JsonExerciseList(val exercises: List<ExerciseDesc>)
     var allExercisesHM: HashMap<UUID, ExerciseDesc> = allExercisesToHM(listOf())
 
+    // Made for previews
+    val exampleDescriptions: List<ExerciseDesc> = listOf(desc1, desc2, desc3)
     val exampleWorkouts: HashMap<UUID, Workout> = newWorkouts(workoutPlans[0])
 
 

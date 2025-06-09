@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gymnotebook.data.DataSource
 import com.example.gymnotebook.data.ExerciseDesc
+import com.example.gymnotebook.data.allExercisesToHM
 import com.example.gymnotebook.ui.cards.ExerciseSelectionCard
 import com.example.gymnotebook.ui.theme.GymNotebookTheme
 import java.util.UUID
@@ -42,14 +43,11 @@ fun AllExercises(
         allExercises?.values?.toTypedArray()?.let { exercises ->
             items(items = exercises, itemContent = { exercise ->
                 Log.d("COMPOSE", "This got rendered ${exercise.name}")
-                ExerciseSelectionCard(
-                    exerciseName = exercise.name,
-                    exerciseCategory = exercise.category,
-                    isSelected = exercise == selectedExercise, // True if this option is selected
-                    onRadioBtnClick = {
-                        selectedExercise = exercise
-                        Log.d("SELECTION", "$selectedExercise is selected.")
-                    }
+                DescriptionCard(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    description = exercise
                 )
                 Spacer(modifier = Modifier.size(8.dp))
             })
@@ -61,6 +59,6 @@ fun AllExercises(
 @Composable
 fun AddExercisesPreview() {
     GymNotebookTheme {
-        AllExercises(allExercises = DataSource.allExercisesHM)
+        AllExercises(allExercises = allExercisesToHM(DataSource.exampleDescriptions))
     }
 }
