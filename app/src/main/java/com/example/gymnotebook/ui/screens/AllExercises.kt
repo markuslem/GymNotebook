@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,15 +34,19 @@ fun AllExercises(
     allExercises: HashMap<UUID, ExerciseDesc> = HashMap(),
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
+    val selectedDesc = remember { mutableStateOf(UUID.randomUUID()) }
 
-    // ...
+    // Alert pops up when the right conditions are met
     when {
-        // ...
         openAlertDialog.value -> {
-            DetailedDescriptionCard(
-                modifier = Modifier,
-                description = allExercises.values.elementAt(0),
-                onClick = {})
+            allExercises.get(selectedDesc.value)?.let {
+                DetailedDescriptionCard(
+                    modifier = Modifier,
+                    description = it,
+                    onClose = {
+                        openAlertDialog.value = false
+                    })
+            }
         }
     }
 
@@ -60,8 +65,9 @@ fun AllExercises(
                         .padding(8.dp),
                     description = exercise,
                     onClick = {
-                        Log.d("WORKOUT", "Exercise description card was expanded")
                         openAlertDialog.value = true
+                        selectedDesc.value = exercise.descId
+                        Log.d("WORKOUT", "Exercise description card was expanded using UUID: " + selectedDesc.value)
                     }
                 )
                 Spacer(modifier = Modifier.size(8.dp))
