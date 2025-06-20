@@ -14,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -32,12 +34,15 @@ import com.example.gymnotebook.ui.theme.GymNotebookTheme
 
 
 @Composable
-fun DescriptionCard(modifier: Modifier, description: ExerciseDesc) {
-    Card(modifier = modifier) {
+fun DescriptionCard(
+    modifier: Modifier, description: ExerciseDesc,
+    onClick: () -> Unit
+) {
+    Card(modifier = modifier, onClick = onClick) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(20.dp),
         ) {
             // Name of exercise and category
             Column(
@@ -71,6 +76,7 @@ fun DescriptionCardPreview() {
             modifier = Modifier
                 .fillMaxWidth(),
             description = DataSource.exampleDescriptions[0],
+            onClick = {}
         )
     }
 }

@@ -30,24 +30,39 @@ import java.util.UUID
 
 @Composable
 fun AllExercises(
-    allExercises: HashMap<UUID, ExerciseDesc>? = HashMap(),
+    allExercises: HashMap<UUID, ExerciseDesc> = HashMap(),
 ) {
-    // Only one of the radio buttons can be selected at a time
-    var selectedExercise by remember { mutableStateOf<ExerciseDesc?>(null) }
+    val openAlertDialog = remember { mutableStateOf(false) }
+
+    // ...
+    when {
+        // ...
+        openAlertDialog.value -> {
+            DetailedDescriptionCard(
+                modifier = Modifier,
+                description = allExercises.values.elementAt(0),
+                onClick = {})
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        allExercises?.values?.toTypedArray()?.let { exercises ->
+        allExercises.values.toTypedArray().let { exercises ->
             items(items = exercises, itemContent = { exercise ->
                 Log.d("COMPOSE", "This got rendered ${exercise.name}")
                 DescriptionCard(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(8.dp),
-                    description = exercise
+                    description = exercise,
+                    onClick = {
+                        Log.d("WORKOUT", "Exercise description card was expanded")
+                        openAlertDialog.value = true
+                    }
                 )
                 Spacer(modifier = Modifier.size(8.dp))
             })

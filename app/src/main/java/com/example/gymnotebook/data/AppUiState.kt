@@ -11,6 +11,6 @@ data class AppUiState(
     var allWorkouts: HashMap<UUID, Workout> = HashMap(),
     var workoutPlans: HashMap<UUID, WorkoutPlan> = DataSource.workoutPlansHM,
     // contains all possible exercises
-    val allExercises: HashMap<UUID, ExerciseDesc>? = DataSource.allExercisesHM
+    val allExercises: HashMap<UUID, ExerciseDesc> = DataSource.allExercisesHM
 )
 
