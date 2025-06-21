@@ -132,7 +132,9 @@ fun GymNotebookApp(
 
             /* Screen displaying all exercises */
             composable(route = AppScreen.AllExercises.name) {
-                AllExercises(allExercises = uiState.allExercises)
+                AllExercises(allExercises = uiState.allExercises,
+
+                    )
             }
 
         }

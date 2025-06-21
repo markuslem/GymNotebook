@@ -10,6 +10,7 @@ import com.example.gymnotebook.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.UUID
@@ -141,11 +142,11 @@ class GymNotebookViewModel : ViewModel() {
                 currentWorkout.totalWeight = totalWeight
                 // Filtering out the exercises that are not done
                 Log.d("WORKOUT", "The sets were: ")
-                currentState.currentExercises?.forEach( {exercise ->
-                    exercise.sets.forEach({Log.d("WORKOUT", "Set: $it")})
+                currentState.currentExercises?.forEach({ exercise ->
+                    exercise.sets.forEach({ Log.d("WORKOUT", "Set: $it") })
                 })
-                currentState.currentExercises?.forEach({
-                        exercise -> exercise.sets = exercise.sets.filter { it.done }
+                currentState.currentExercises?.forEach({ exercise ->
+                    exercise.sets = exercise.sets.filter { it.done }
                 })
                 if (currentState.currentExercises != null)
                     currentWorkout.exercises = currentState.currentExercises ?: listOf()
@@ -205,11 +206,35 @@ class GymNotebookViewModel : ViewModel() {
     /* Changing the value of done field in a set */
     fun doneChanged(exerciseId: UUID, setId: UUID, checked: Boolean) {
         _uiState.update { currentState ->
-            val set = currentState.currentExercises?.find { it.exerciseId == exerciseId }?.sets?.find { it.id == setId }
+            val set =
+                currentState.currentExercises?.find { it.exerciseId == exerciseId }?.sets?.find { it.id == setId }
             set?.done = checked
             currentState.copy()
         }
         Log.d("WORKOUT", "changed value to: $checked")
 
+    }
+
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
+    private val _allExercisesStateFlow = MutableStateFlow(uiState.value.allExercises)
+
+
+    /* When text changes in the search bar */
+    fun onSearchTextChange(text: String) {
+        _searchText.value = text
+    }
+
+    private val _displayedExercises = MutableStateFlow(listOf<ExerciseDesc>())
+    val displayedExercises = searchText.combine(_allExercisesStateFlow) { text, exercises ->
+        if (text.isBlank()) {
+            exercises
+        } else {
+            exercises.filter {
+                it.value.matchesSearchQuery(text)
+            }
+        }
     }
 }

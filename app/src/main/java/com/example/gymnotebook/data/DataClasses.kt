@@ -39,5 +39,12 @@ data class ExerciseDesc(
     val mechanic: String?, val equipment: String?,
     val primaryMuscles: List<String>, val secondaryMuscles: List<String>,
     val instructions: List<String>, val category: String
-)
+) {
+    fun matchesSearchQuery(query: String): Boolean {
+        val matchingCombinations = name.split(" ")
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}
 
