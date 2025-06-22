@@ -2,15 +2,19 @@ package com.example.gymnotebook.ui
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.gymnotebook.data.AppUiState
 import com.example.gymnotebook.data.Exercise
 import com.example.gymnotebook.data.ExerciseDesc
 import com.example.gymnotebook.data.SetOfExercise
 import com.example.gymnotebook.data.Workout
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.UUID
@@ -24,7 +28,7 @@ class GymNotebookViewModel : ViewModel() {
         Log.d("WORKOUT", "Started a new workout with workout plan ID: $workoutPlanId")
         // Getting exercises from the workout plan
         _uiState.update { currentState ->
-            val workoutPlan = currentState.workoutPlans.get(workoutPlanId)
+            val workoutPlan = currentState.workoutPlans[workoutPlanId]
             val exercises = workoutPlan?.exercisesList
             val newWorkout = Workout(
                 title = workoutPlan?.title ?: "Unnamed workout",
@@ -217,9 +221,6 @@ class GymNotebookViewModel : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
-    private val _isSearching = MutableStateFlow(false)
-    val isSearching = _isSearching.asStateFlow()
-    private val _allExercisesStateFlow = MutableStateFlow(uiState.value.allExercises)
 
 
     /* When text changes in the search bar */
@@ -227,14 +228,20 @@ class GymNotebookViewModel : ViewModel() {
         _searchText.value = text
     }
 
-    private val _displayedExercises = MutableStateFlow(listOf<ExerciseDesc>())
-    val displayedExercises = searchText.combine(_allExercisesStateFlow) { text, exercises ->
-        if (text.isBlank()) {
-            exercises
-        } else {
-            exercises.filter {
-                it.value.matchesSearchQuery(text)
+
+    private val _allExercises = MutableStateFlow(_uiState.value.allExercises)
+    val displayedExercises : StateFlow<Map<UUID, ExerciseDesc>> =
+        searchText.combine(_allExercises) { text, exercises ->
+            if (text.isBlank()) {
+                exercises
+            } else {
+                exercises.filter {
+                    it.value.matchesSearchQuery(text)
+                }
             }
-        }
-    }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = _allExercises.value
+        )
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,15 +27,18 @@ import java.util.UUID
 
 @Composable
 fun AllExercises(
-    allExercises: HashMap<UUID, ExerciseDesc> = HashMap(),
+    allExercises: Map<UUID, ExerciseDesc> = HashMap(),
+    onTextChange: (String) -> Unit,
+    searchText: String = ""
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
     val selectedDesc = remember { mutableStateOf(UUID.randomUUID()) }
+    var textLocally = remember { mutableStateOf("") }
 
     // Alert pops up when the right conditions are met
     when {
         openAlertDialog.value -> {
-            allExercises.get(selectedDesc.value)?.let {
+            allExercises[selectedDesc.value]?.let {
                 DetailedDescriptionCard(
                     modifier = Modifier,
                     description = it,
@@ -51,15 +53,17 @@ fun AllExercises(
         modifier = Modifier.padding(16.dp)
     )
     {
+        // Search bar
         TextField(
-            value = "searchText",
-            onValueChange = {},
+            value = searchText,
+            onValueChange = onTextChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(text = "Search") }
         )
 
         Spacer(Modifier.size(16.dp))
 
+        // Scrollable column containing exercise descriptions
         LazyColumn(
             modifier = Modifier
                 .fillMaxHeight(),
@@ -93,6 +97,9 @@ fun AllExercises(
 @Composable
 fun AddExercisesPreview() {
     GymNotebookTheme {
-        AllExercises(allExercises = allExercisesToHM(DataSource.exampleDescriptions))
+        AllExercises(
+            allExercises = allExercisesToHM(DataSource.exampleDescriptions),
+            onTextChange = { }
+        )
     }
 }

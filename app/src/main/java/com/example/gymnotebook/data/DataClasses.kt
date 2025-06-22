@@ -41,9 +41,14 @@ data class ExerciseDesc(
     val instructions: List<String>, val category: String
 ) {
     fun matchesSearchQuery(query: String): Boolean {
-        val matchingCombinations = name.split(" ")
-        return matchingCombinations.any {
-            it.contains(query, ignoreCase = true)
+        val queryWords = query.trim().split(" ")
+
+        val nameWords = name.trim().split(" ")
+
+        return queryWords.all { queryWord ->
+            nameWords.any { nameWord ->
+                nameWord.contains(queryWord, ignoreCase = true)
+            }
         }
     }
 }

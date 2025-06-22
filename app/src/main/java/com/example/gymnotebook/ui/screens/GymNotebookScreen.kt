@@ -16,7 +16,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.gymnotebook.data.ExerciseDesc
 import com.example.gymnotebook.ui.GymNotebookViewModel
+import java.util.UUID
 
 enum class AppScreen(barTitle: String) {
     RecordWorkout(barTitle = "Record a new workout"),
@@ -30,7 +32,7 @@ enum class AppScreen(barTitle: String) {
 
 @Composable
 fun GymNotebookApp(
-    viewModel: GymNotebookViewModel = viewModel(),
+    viewModel: GymNotebookViewModel = viewModel<GymNotebookViewModel>(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -45,9 +47,14 @@ fun GymNotebookApp(
                 val currentDestination = navBackStackEntry?.destination
 
                 // List of screens which have a corresponding button in the bottom navigation bar
-                val listOfNavScreens = listOf(AppScreen.RecordWorkout, AppScreen.WorkoutHistory, AppScreen.AllExercises)
+                val listOfNavScreens = listOf(
+                    AppScreen.RecordWorkout,
+                    AppScreen.WorkoutHistory,
+                    AppScreen.AllExercises
+                )
                 listOfNavScreens.forEach { screen ->
-                    BottomNavigationItem(selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+                    BottomNavigationItem(
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
                         onClick = {
                             navController.navigate(screen.name)
                         },
@@ -62,7 +69,8 @@ fun GymNotebookApp(
     )
     { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
-        //RecordWorkoutScreen(modifier = Modifier.padding(innerPadding))
+        val searchText by viewModel.searchText.collectAsState()
+        val displayedExercises by viewModel.displayedExercises.collectAsState()
 
         NavHost(
             navController = navController,
@@ -132,9 +140,11 @@ fun GymNotebookApp(
 
             /* Screen displaying all exercises */
             composable(route = AppScreen.AllExercises.name) {
-                AllExercises(allExercises = uiState.allExercises,
-
-                    )
+                AllExercises(
+                    allExercises = displayedExercises,
+                    onTextChange = viewModel::onSearchTextChange,
+                    searchText = searchText,
+                )
             }
 
         }
