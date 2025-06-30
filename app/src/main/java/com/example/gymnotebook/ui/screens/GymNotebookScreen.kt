@@ -123,13 +123,15 @@ fun GymNotebookApp(
             */
             composable(route = AppScreen.ExercisesSelection.name) {
                 ExerciseSelectionScreen(
-                    allExercises = uiState.allExercises,
+                    allExercises = displayedExercises,
                     addSelectedExercise = { desc ->
                         // Adding the exercise which is currently selected in ExerciseSelectionScreen
                         viewModel.addExerciseToOngoing(desc)
                         navController.navigate(AppScreen.OngoingWorkout.name)
                     },
-                    cancelExerciseSelection = { navController.navigate(AppScreen.OngoingWorkout.name) }
+                    cancelExerciseSelection = { navController.navigate(AppScreen.OngoingWorkout.name) },
+                    onTextChange = viewModel::onSearchTextChange,
+                    searchText = searchText
                 )
             }
 

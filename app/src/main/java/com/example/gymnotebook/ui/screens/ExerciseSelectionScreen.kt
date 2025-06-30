@@ -2,18 +2,21 @@ package com.example.gymnotebook.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,32 +35,52 @@ import java.util.UUID
 @Composable
 fun ExerciseSelectionScreen(
     modifier: Modifier = Modifier,
-    allExercises: HashMap<UUID, ExerciseDesc>? = HashMap(),
+    allExercises: Map<UUID, ExerciseDesc>? = HashMap(),
     addSelectedExercise: (ExerciseDesc?) -> Unit,
-    cancelExerciseSelection: () -> Unit
+    cancelExerciseSelection: () -> Unit,
+    onTextChange: (String) -> Unit,
+    searchText: String = ""
 ) {
     // Only one of the radio buttons can be selected at a time
     var selectedExercise by remember { mutableStateOf<ExerciseDesc?>(null) }
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxHeight()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+
+
+    Column(
+        modifier = Modifier.padding(16.dp)
     ) {
-        allExercises?.values?.toTypedArray()?.let { exercises ->
-            items(items = exercises, itemContent = { exercise ->
-                Log.d("COMPOSE", "This got rendered ${exercise.name}")
-                ExerciseSelectionCard(
-                    exerciseName = exercise.name,
-                    exerciseCategory = exercise.category,
-                    isSelected = exercise == selectedExercise, // True if this option is selected
-                    onRadioBtnClick = {
-                        selectedExercise = exercise
-                        Log.d("SELECTION", "$selectedExercise is selected.")
-                    }
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-            })
+
+        // Search bar
+        TextField(
+            value = searchText,
+            onValueChange = onTextChange,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(text = "Search") }
+        )
+
+        Spacer(Modifier.size(16.dp))
+
+        // Scrollable column containing exercise descriptions
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            allExercises?.values?.toTypedArray()?.let { exercises ->
+                items(items = exercises, itemContent = { exercise ->
+                    Log.d("COMPOSE", "This got rendered ${exercise.name}")
+                    ExerciseSelectionCard(
+                        exerciseName = exercise.name,
+                        exerciseCategory = exercise.category,
+                        isSelected = exercise == selectedExercise, // True if this option is selected
+                        onRadioBtnClick = {
+                            selectedExercise = exercise
+                            Log.d("SELECTION", "$selectedExercise is selected.")
+                        }
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                })
+            }
         }
     }
     Row(
@@ -80,6 +103,6 @@ fun ExerciseSelectionScreen(
 fun ExerciseSelectionScreenPreview() {
     GymNotebookTheme {
         ExerciseSelectionScreen(allExercises = DataSource.allExercisesHM,
-            addSelectedExercise = {}, cancelExerciseSelection = {})
+            addSelectedExercise = {}, cancelExerciseSelection = {}, onTextChange = {})
     }
 }

@@ -33,7 +33,6 @@ fun AllExercises(
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
     val selectedDesc = remember { mutableStateOf(UUID.randomUUID()) }
-    var textLocally = remember { mutableStateOf("") }
 
     // Alert pops up when the right conditions are met
     when {
